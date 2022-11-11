@@ -97,7 +97,7 @@ fn setup_contract() -> App {
     // set up cw20 staking contract
     let cw20_stake_id = router.store_code(contract_cw20_stake());
     let msg = cw20_stake::msg::InstantiateMsg {
-        token_address: cw20_addr.clone().to_string(),
+        token_address: cw20_addr.to_string(),
         owner: None,
         manager: None,
         unstaking_duration: None,
@@ -112,8 +112,8 @@ fn setup_contract() -> App {
     // set up trust contract
     let trust_id = router.store_code(contract_trust());
     let msg = trust::msg::InstantiateMsg {
-        maintainer: admin.clone().to_string(),
-        staking_contract: cw20_stake_addr.clone().to_string(),
+        maintainer: admin.to_string(),
+        staking_contract: cw20_stake_addr.to_string(),
         commerce_code_id: commerce_id,
         review_interval: 86400u64,
         max_staked_days: 240,
@@ -138,10 +138,10 @@ fn setup_contract() -> App {
             commerce_id,
             admin.clone(),
             &InstantiateMsg {
-                admins: vec![admin.clone().to_string()],
-                denom: cw20_addr.clone().to_string(),
+                admins: vec![admin.to_string()],
+                denom: cw20_addr.to_string(),
                 withdrawal_address: admin.to_string(),
-                trust_contract: trust_addr.clone().to_string(),
+                trust_contract: trust_addr.to_string(),
             },
             &[],
             "COMMERCE",
@@ -166,7 +166,7 @@ fn try_create_listing() {
 
     let create_listing_msg = ExecuteMsg::CreateListing {
         active: true,
-        price: Uint128::from(1000 as u128),
+        price: Uint128::from(1000u128),
         attributes: Attributes {
             name: String::from("WHITE TAPED SLEEVE T-SHIRT"),
             images: vec![String::from(
@@ -183,7 +183,7 @@ fn try_create_listing() {
                 ListingOptionItem::new("L", None, Addr::unchecked(CW20).to_string()),
                 ListingOptionItem::new(
                     "XL",
-                    Some(Uint128::from(200 as u128)),
+                    Some(Uint128::from(200u128)),
                     Addr::unchecked(CW20).to_string(),
                 ),
             ],
@@ -194,7 +194,7 @@ fn try_create_listing() {
     let res = router.execute_contract(
         authorized,
         Addr::unchecked(COMMERCE),
-        &create_listing_msg.clone(),
+        &create_listing_msg,
         &[],
     );
     assert!(res.is_ok());
@@ -203,7 +203,7 @@ fn try_create_listing() {
     let err = router.execute_contract(
         unauthorized,
         Addr::unchecked(COMMERCE),
-        &create_listing_msg.clone(),
+        &create_listing_msg,
         &[],
     );
     assert!(err.is_err());
@@ -218,7 +218,7 @@ fn try_update_listing() {
 
     let create_listing_msg = ExecuteMsg::CreateListing {
         active: true,
-        price: Uint128::from(1000 as u128),
+        price: Uint128::from(1000u128),
         attributes: Attributes {
             name: String::from("WHITE TAPED SLEEVE T-SHIRT"),
             images: vec![String::from(
@@ -235,7 +235,7 @@ fn try_update_listing() {
                 ListingOptionItem::new("L", None, Addr::unchecked(CW20).to_string()),
                 ListingOptionItem::new(
                     "XL",
-                    Some(Uint128::from(200 as u128)),
+                    Some(Uint128::from(200u128)),
                     Addr::unchecked(CW20).to_string(),
                 ),
             ],
@@ -246,7 +246,7 @@ fn try_update_listing() {
     let res = router.execute_contract(
         authorized.clone(),
         Addr::unchecked(COMMERCE),
-        &create_listing_msg.clone(),
+        &create_listing_msg,
         &[],
     );
     assert!(res.is_ok());
@@ -255,7 +255,7 @@ fn try_update_listing() {
     let update_listing_msg = ExecuteMsg::UpdateListing {
         id: 1,
         active: false,
-        price: Uint128::from(100 as u128),
+        price: Uint128::from(100u128),
         attributes: Attributes {
             name: String::from("WHITE TAPED SLEEVE T-SHIRT"),
             images: vec![String::from(
@@ -272,7 +272,7 @@ fn try_update_listing() {
                 ListingOptionItem::new("L", None, Addr::unchecked(CW20).to_string()),
                 ListingOptionItem::new(
                     "XL",
-                    Some(Uint128::from(200 as u128)),
+                    Some(Uint128::from(200u128)),
                     Addr::unchecked(CW20).to_string(),
                 ),
             ],
@@ -281,18 +281,18 @@ fn try_update_listing() {
 
     // This user is authorized to execute the message
     let res = router.execute_contract(
-        authorized.clone(),
+        authorized,
         Addr::unchecked(COMMERCE),
-        &update_listing_msg.clone(),
+        &update_listing_msg,
         &[],
     );
     assert!(res.is_ok());
 
     // This user isn't!
     let err = router.execute_contract(
-        unauthorized.clone(),
+        unauthorized,
         Addr::unchecked(COMMERCE),
-        &update_listing_msg.clone(),
+        &update_listing_msg,
         &[],
     );
     assert!(err.is_err());
@@ -307,7 +307,7 @@ fn try_delete_listing() {
 
     let create_listing_msg = ExecuteMsg::CreateListing {
         active: true,
-        price: Uint128::from(1000 as u128),
+        price: Uint128::from(1000u128),
         attributes: Attributes {
             name: String::from("WHITE TAPED SLEEVE T-SHIRT"),
             images: vec![String::from(
@@ -324,7 +324,7 @@ fn try_delete_listing() {
                 ListingOptionItem::new("L", None, Addr::unchecked(CW20).to_string()),
                 ListingOptionItem::new(
                     "XL",
-                    Some(Uint128::from(200 as u128)),
+                    Some(Uint128::from(200u128)),
                     Addr::unchecked(CW20).to_string(),
                 ),
             ],
@@ -335,7 +335,7 @@ fn try_delete_listing() {
     let res = router.execute_contract(
         authorized.clone(),
         Addr::unchecked(COMMERCE),
-        &create_listing_msg.clone(),
+        &create_listing_msg,
         &[],
     );
     assert!(res.is_ok());
@@ -344,18 +344,18 @@ fn try_delete_listing() {
 
     // This user is authorized to execute the message
     let res = router.execute_contract(
-        authorized.clone(),
+        authorized,
         Addr::unchecked(COMMERCE),
-        &delete_listing_msg.clone(),
+        &delete_listing_msg,
         &[],
     );
     assert!(res.is_ok());
 
     // This user isn't!
     let err = router.execute_contract(
-        unauthorized.clone(),
+        unauthorized,
         Addr::unchecked(COMMERCE),
-        &delete_listing_msg.clone(),
+        &delete_listing_msg,
         &[],
     );
     assert!(err.is_err());
@@ -370,7 +370,7 @@ fn try_create_order() {
 
     let create_listing_msg = ExecuteMsg::CreateListing {
         active: true,
-        price: Uint128::from(1000 as u128),
+        price: Uint128::from(1000u128),
         attributes: Attributes {
             name: String::from("WHITE TAPED SLEEVE T-SHIRT"),
             images: vec![String::from(
@@ -387,7 +387,7 @@ fn try_create_order() {
                 ListingOptionItem::new("L", None, Addr::unchecked(CW20).to_string()),
                 ListingOptionItem::new(
                     "XL",
-                    Some(Uint128::from(200 as u128)),
+                    Some(Uint128::from(200u128)),
                     Addr::unchecked(CW20).to_string(),
                 ),
             ],
@@ -395,12 +395,7 @@ fn try_create_order() {
     };
 
     // This user is authorized to execute the message
-    let res = router.execute_contract(
-        seller,
-        Addr::unchecked(COMMERCE),
-        &create_listing_msg.clone(),
-        &[],
-    );
+    let res = router.execute_contract(seller, Addr::unchecked(COMMERCE), &create_listing_msg, &[]);
     assert!(res.is_ok());
 
     // Cost should be 2000
@@ -432,7 +427,7 @@ fn try_create_order() {
     };
 
     // This message sends funds
-    let res = router.execute_contract(buyer.clone(), Addr::unchecked(CW20), &send_msg.clone(), &[]);
+    let res = router.execute_contract(buyer.clone(), Addr::unchecked(CW20), &send_msg, &[]);
     assert!(res.is_ok());
 
     // Verify that the buyer has sent the 2000
@@ -442,12 +437,7 @@ fn try_create_order() {
     assert_eq!(buyer_balance, Uint128::new(3000));
 
     // This message does not send any funds
-    let err = router.execute_contract(
-        buyer.clone(),
-        Addr::unchecked(CW20),
-        &incorrect_send_msg.clone(),
-        &[],
-    );
+    let err = router.execute_contract(buyer, Addr::unchecked(CW20), &incorrect_send_msg, &[]);
     assert!(err.is_err());
 }
 
@@ -461,7 +451,7 @@ fn try_cancel_order() {
 
     let create_listing_msg = ExecuteMsg::CreateListing {
         active: true,
-        price: Uint128::from(1000 as u128),
+        price: Uint128::from(1000u128),
         attributes: Attributes {
             name: String::from("WHITE TAPED SLEEVE T-SHIRT"),
             images: vec![String::from(
@@ -478,7 +468,7 @@ fn try_cancel_order() {
                 ListingOptionItem::new("L", None, Addr::unchecked(CW20).to_string()),
                 ListingOptionItem::new(
                     "XL",
-                    Some(Uint128::from(200 as u128)),
+                    Some(Uint128::from(200u128)),
                     Addr::unchecked(CW20).to_string(),
                 ),
             ],
@@ -486,12 +476,7 @@ fn try_cancel_order() {
     };
 
     // This user is authorized to execute the message
-    let res = router.execute_contract(
-        seller,
-        Addr::unchecked(COMMERCE),
-        &create_listing_msg.clone(),
-        &[],
-    );
+    let res = router.execute_contract(seller, Addr::unchecked(COMMERCE), &create_listing_msg, &[]);
     assert!(res.is_ok());
 
     // Cost should be 2000
@@ -517,7 +502,7 @@ fn try_cancel_order() {
     };
 
     // This message sends funds
-    let res = router.execute_contract(buyer.clone(), Addr::unchecked(CW20), &send_msg.clone(), &[]);
+    let res = router.execute_contract(buyer.clone(), Addr::unchecked(CW20), &send_msg, &[]);
     assert!(res.is_ok());
 
     // Verify that the buyer has sent the 2000
@@ -532,23 +517,23 @@ fn try_cancel_order() {
     let res = router.execute_contract(
         buyer.clone(),
         Addr::unchecked(COMMERCE),
-        &cancel_order_msg.clone(),
+        &cancel_order_msg,
         &[],
     );
     assert!(res.is_ok());
 
     // This is sent by an unauthorized party
     let err = router.execute_contract(
-        unauthorized.clone(),
+        unauthorized,
         Addr::unchecked(COMMERCE),
-        &cancel_order_msg.clone(),
+        &cancel_order_msg,
         &[],
     );
-    assert!(!err.is_ok());
+    assert!(err.is_err());
 
     // Verify that the buyer has gotten the funds back
     let buyer_balance = Cw20Contract(Addr::unchecked(CW20))
-        .balance::<_, _, Empty>(&router, buyer.clone())
+        .balance::<_, _, Empty>(&router, buyer)
         .unwrap();
     assert_eq!(buyer_balance, Uint128::new(5000));
 }
@@ -563,7 +548,7 @@ fn try_update_order() {
 
     let create_listing_msg = ExecuteMsg::CreateListing {
         active: true,
-        price: Uint128::from(1000 as u128),
+        price: Uint128::from(1000u128),
         attributes: Attributes {
             name: String::from("WHITE TAPED SLEEVE T-SHIRT"),
             images: vec![String::from(
@@ -580,7 +565,7 @@ fn try_update_order() {
                 ListingOptionItem::new("L", None, Addr::unchecked(CW20).to_string()),
                 ListingOptionItem::new(
                     "XL",
-                    Some(Uint128::from(200 as u128)),
+                    Some(Uint128::from(200u128)),
                     Addr::unchecked(CW20).to_string(),
                 ),
             ],
@@ -591,7 +576,7 @@ fn try_update_order() {
     let res = router.execute_contract(
         seller.clone(),
         Addr::unchecked(COMMERCE),
-        &create_listing_msg.clone(),
+        &create_listing_msg,
         &[],
     );
     assert!(res.is_ok());
@@ -625,7 +610,7 @@ fn try_update_order() {
     };
 
     // This message sends funds
-    let res = router.execute_contract(buyer.clone(), Addr::unchecked(CW20), &send_msg.clone(), &[]);
+    let res = router.execute_contract(buyer.clone(), Addr::unchecked(CW20), &send_msg, &[]);
     assert!(res.is_ok());
 
     // Verify that the buyer has sent the 2000
@@ -638,7 +623,7 @@ fn try_update_order() {
     let err = router.execute_contract(
         buyer.clone(),
         Addr::unchecked(CW20),
-        &incorrect_send_msg.clone(),
+        &incorrect_send_msg,
         &[],
     );
     assert!(err.is_err());
@@ -653,19 +638,14 @@ fn try_update_order() {
     };
 
     // This user is authorized to execute the message
-    let res = router.execute_contract(
-        seller.clone(),
-        Addr::unchecked(COMMERCE),
-        &update_order_msg.clone(),
-        &[],
-    );
+    let res = router.execute_contract(seller, Addr::unchecked(COMMERCE), &update_order_msg, &[]);
     assert!(res.is_ok());
 
     // This user isn't!
     let err = router.execute_contract(
         unauthorized,
         Addr::unchecked(COMMERCE),
-        &update_order_msg.clone(),
+        &update_order_msg,
         &[],
     );
     assert!(err.is_err());
@@ -673,12 +653,7 @@ fn try_update_order() {
     let cancel_order_msg = ExecuteMsg::CancelOrder { id: 1 };
 
     // Buyer can't cancel an order if it is fulfilling
-    let res = router.execute_contract(
-        buyer.clone(),
-        Addr::unchecked(COMMERCE),
-        &cancel_order_msg.clone(),
-        &[],
-    );
+    let res = router.execute_contract(buyer, Addr::unchecked(COMMERCE), &cancel_order_msg, &[]);
     assert!(res.is_err());
 }
 
@@ -691,7 +666,7 @@ fn try_complete_order() {
 
     let create_listing_msg = ExecuteMsg::CreateListing {
         active: true,
-        price: Uint128::from(1000 as u128),
+        price: Uint128::from(1000u128),
         attributes: Attributes {
             name: String::from("WHITE TAPED SLEEVE T-SHIRT"),
             images: vec![String::from(
@@ -708,7 +683,7 @@ fn try_complete_order() {
                 ListingOptionItem::new("L", None, Addr::unchecked(CW20).to_string()),
                 ListingOptionItem::new(
                     "XL",
-                    Some(Uint128::from(200 as u128)),
+                    Some(Uint128::from(200u128)),
                     Addr::unchecked(CW20).to_string(),
                 ),
             ],
@@ -719,7 +694,7 @@ fn try_complete_order() {
     let res = router.execute_contract(
         seller.clone(),
         Addr::unchecked(COMMERCE),
-        &create_listing_msg.clone(),
+        &create_listing_msg,
         &[],
     );
     assert!(res.is_ok());
@@ -747,7 +722,7 @@ fn try_complete_order() {
     };
 
     // This message sends funds
-    let res = router.execute_contract(buyer.clone(), Addr::unchecked(CW20), &send_msg.clone(), &[]);
+    let res = router.execute_contract(buyer.clone(), Addr::unchecked(CW20), &send_msg, &[]);
     assert!(res.is_ok());
 
     // Verify that the buyer has sent the 2000
@@ -769,7 +744,7 @@ fn try_complete_order() {
     let res = router.execute_contract(
         seller.clone(),
         Addr::unchecked(COMMERCE),
-        &update_order_msg.clone(),
+        &update_order_msg,
         &[],
     );
     assert!(res.is_ok());
@@ -784,7 +759,7 @@ fn try_complete_order() {
         &complete_order_msg.clone(),
         &[],
     );
-    assert!(!err.is_ok());
+    assert!(err.is_err());
 
     // This user is authorized to execute the message
     let res = router.execute_contract(
@@ -813,12 +788,7 @@ fn try_complete_order() {
         review: ReviewResult::ThumbsUp,
     };
 
-    let res = router.execute_contract(
-        buyer.clone(),
-        Addr::unchecked(TRUST),
-        &buyer_review_msg,
-        &[],
-    );
+    let res = router.execute_contract(buyer, Addr::unchecked(TRUST), &buyer_review_msg, &[]);
 
     assert!(res.is_ok());
 
@@ -843,17 +813,12 @@ fn try_complete_order() {
     };
 
     // This message sends funds to the staking contract
-    let res = router.execute_contract(
-        seller.clone(),
-        Addr::unchecked(CW20),
-        &send_msg.clone(),
-        &[],
-    );
+    let res = router.execute_contract(seller.clone(), Addr::unchecked(CW20), &send_msg, &[]);
     assert!(res.is_ok());
 
     // Update staking info for seller
     let update_staking_msg = trust::msg::ExecuteMsg::UpdateStakingInfo {
-        address: seller.clone().to_string(),
+        address: seller.to_string(),
     };
 
     let mut count = 0;

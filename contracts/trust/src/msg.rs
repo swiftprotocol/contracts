@@ -2,7 +2,10 @@ use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Uint128;
 
 use crate::{
-    response::*,
+    response::{
+        AccountsResponse, ConfigResponse, PendingReviewResponse, PendingReviewsResponse,
+        StakeAmountResponse, TrustInfoResponse,
+    },
     state::{ReviewResult, TrustScoreParams},
 };
 
