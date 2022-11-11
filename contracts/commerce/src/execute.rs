@@ -278,7 +278,7 @@ pub fn execute_complete_order(
             orders().remove(deps.storage, order.id)?;
 
             // Buyer leaves review to every seller
-            let msgs: Vec<TrustExecuteMsg> = admin_list
+            let buyer_messages = admin_list
                 .admins
                 .clone()
                 .into_iter()
@@ -287,16 +287,14 @@ pub fn execute_complete_order(
                     reviewer: order.buyer.to_string(),
                     order_id: order.id,
                 })
-                .collect();
-
-            let buyer_messages = msgs.into_iter().map(|msg| {
-                let msg = to_binary(&msg).unwrap();
-                WasmMsg::Execute {
-                    contract_addr: config.trust_contract.to_string(),
-                    msg,
-                    funds: vec![],
-                }
-            });
+                .map(|msg| {
+                    let msg = to_binary(&msg).unwrap();
+                    WasmMsg::Execute {
+                        contract_addr: config.trust_contract.to_string(),
+                        msg,
+                        funds: vec![],
+                    }
+                });
 
             // Main seller leaves review to buyer
             let msg: TrustExecuteMsg = TrustExecuteMsg::RegisterPendingReview {

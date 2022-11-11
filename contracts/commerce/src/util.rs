@@ -15,7 +15,7 @@ use crate::{
 /// Verify that an address is authorized to execute a privileged operation
 pub fn can_execute(deps: Deps, sender: &str) -> StdResult<bool> {
     let cfg = ADMIN_LIST.load(deps.storage)?;
-    let can = cfg.is_admin(&sender);
+    let can = cfg.is_admin(sender);
     Ok(can)
 }
 

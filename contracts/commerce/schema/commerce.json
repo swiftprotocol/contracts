@@ -7,7 +7,10 @@
     "title": "InstantiateMsg",
     "type": "object",
     "required": [
-      "admins"
+      "admins",
+      "denom",
+      "trust_contract",
+      "withdrawal_address"
     ],
     "properties": {
       "admins": {
@@ -15,6 +18,15 @@
         "items": {
           "type": "string"
         }
+      },
+      "denom": {
+        "type": "string"
+      },
+      "trust_contract": {
+        "type": "string"
+      },
+      "withdrawal_address": {
+        "type": "string"
       }
     },
     "additionalProperties": false
@@ -58,11 +70,22 @@
           "update_config": {
             "type": "object",
             "required": [
-              "config"
+              "denom",
+              "trust_contract",
+              "withdrawal_address"
             ],
             "properties": {
-              "config": {
-                "$ref": "#/definitions/Config"
+              "denom": {
+                "description": "Address of the CW20 contract to be used as a denom for this site",
+                "type": "string"
+              },
+              "trust_contract": {
+                "description": "Address of the trust contact",
+                "type": "string"
+              },
+              "withdrawal_address": {
+                "description": "Address to which funds held by the contract can be withdrawn",
+                "type": "string"
               }
             },
             "additionalProperties": false
@@ -398,23 +421,6 @@
       "Binary": {
         "description": "Binary is a wrapper around Vec<u8> to add base64 de/serialization with serde. It also adds some helper methods to help encode inline.\n\nThis is only needed as serde-json-{core,wasm} has a horrible encoding for Vec<u8>. See also <https://github.com/CosmWasm/cosmwasm/blob/main/docs/MESSAGE_TYPES.md>.",
         "type": "string"
-      },
-      "Config": {
-        "type": "object",
-        "required": [
-          "denom",
-          "withdrawal_address"
-        ],
-        "properties": {
-          "denom": {
-            "description": "Address of the CW20 contract to be used as a denom for this site",
-            "type": "string"
-          },
-          "withdrawal_address": {
-            "description": "Address to which funds held by the contract can be withdrawn",
-            "type": "string"
-          }
-        }
       },
       "Cw20Coin": {
         "type": "object",
@@ -901,20 +907,41 @@
       },
       "additionalProperties": false,
       "definitions": {
+        "Addr": {
+          "description": "A human readable address.\n\nIn Cosmos, this is typically bech32 encoded. But for multi-chain smart contracts no assumptions should be made other than being UTF-8 encoded and of reasonable length.\n\nThis type represents a validated address. It can be created in the following ways 1. Use `Addr::unchecked(input)` 2. Use `let checked: Addr = deps.api.addr_validate(input)?` 3. Use `let checked: Addr = deps.api.addr_humanize(canonical_addr)?` 4. Deserialize from JSON. This must only be done from JSON that was validated before such as a contract's state. `Addr` must not be used in messages sent by the user because this would result in unvalidated instances.\n\nThis type is immutable. If you really need to mutate it (Really? Are you sure?), create a mutable copy using `let mut mutable = Addr::to_string()` and operate on that `String` instance.",
+          "type": "string"
+        },
         "Config": {
           "type": "object",
           "required": [
             "denom",
+            "trust_contract",
             "withdrawal_address"
           ],
           "properties": {
             "denom": {
               "description": "Address of the CW20 contract to be used as a denom for this site",
-              "type": "string"
+              "allOf": [
+                {
+                  "$ref": "#/definitions/Addr"
+                }
+              ]
+            },
+            "trust_contract": {
+              "description": "Address of the trust contact",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/Addr"
+                }
+              ]
             },
             "withdrawal_address": {
               "description": "Address to which funds held by the contract can be withdrawn",
-              "type": "string"
+              "allOf": [
+                {
+                  "$ref": "#/definitions/Addr"
+                }
+              ]
             }
           }
         }
