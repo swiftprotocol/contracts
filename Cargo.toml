@@ -1,5 +1,5 @@
 [workspace]
-members = ["contracts/*", "dao-contracts/contracts/staking/*"]
+members = ["contracts/*", "dao-contracts/contracts/staking/cw20-stake", "dao-contracts/packages/cw-paginate"]
 resolver = "2"
 
 [workspace.package]
@@ -23,8 +23,11 @@ cw-storage-plus   = "0.16.0"
 cw-utils          = "0.16.0"
 schemars          = "0.8.11"
 semver            = "1"
-serde             = { version = "1.0.145", default-features = false, features = ["derive"] }
 thiserror         = "1.0.31"
+cosmwasm-storage  = "1.1.5"
+anyhow            = "1.0.66"
+cw-paginate       = { path = "dao-contracts/packages/cw-paginate/" }
+serde             = { version = "1.0.145", default-features = false, features = ["derive"] }
 
 [profile.release.package.commerce]
 codegen-units = 1

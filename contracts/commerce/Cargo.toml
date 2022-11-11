@@ -35,7 +35,7 @@ schemars = { workspace = true }
 serde = { workspace = true }
 thiserror = { workspace = true }
 trust = { path = "../trust"}
-cw20-stake = { path = "../../submodules/dao-contracts/contracts/staking/cw20-stake" }
+cw20-stake = { path = "../../dao-contracts/contracts/staking/cw20-stake" }
 
 [dev-dependencies]
 cw-multi-test = { workspace = true }
