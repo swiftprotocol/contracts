@@ -24,6 +24,8 @@ jobs:
     steps:
       - checkout:
           path: ~/project
+      - run: git submodule sync
+      - run: git submodule update --init
       - run:
           name: Version information
           command: rustc --version; cargo --version; rustup --version
@@ -60,6 +62,8 @@ jobs:
     steps:
       - checkout:
           path: ~/project
+      - run: git submodule sync
+      - run: git submodule update --init
       - run:
           name: Version information
           command: rustc --version; cargo --version; rustup --version
@@ -94,6 +98,8 @@ jobs:
       - image: rust:1.64.0
     steps:
       - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
       - run:
           name: Version information
           command: rustc --version; cargo --version; rustup --version; rustup target list --installed
@@ -130,6 +136,8 @@ jobs:
     steps:
       - checkout:
           path: ~/project
+      - run: git submodule sync
+      - run: git submodule update --init
       - run:
           name: Version information
           command: rustc --version; cargo --version; rustup --version
@@ -176,6 +184,8 @@ jobs:
           command: apk add docker-cli
       - setup_remote_docker
       - checkout
+      - run: git submodule sync
+      - run: git submodule update --init
       - run:
           # We cannot mount local folders, see https://circleci.com/docs/2.0/building-docker-images/#mounting-folders
           name: Prepare volume with source code
