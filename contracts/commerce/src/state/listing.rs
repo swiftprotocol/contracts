@@ -1,11 +1,10 @@
+use cosmwasm_schema::cw_serde;
 use cw20::Cw20Coin;
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
 
 use cosmwasm_std::{StdResult, Storage, Uint128};
 use cw_storage_plus::{Index, IndexList, IndexedMap, Item, UniqueIndex};
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct Listing {
     pub id: u64,
     pub active: bool,
@@ -14,14 +13,14 @@ pub struct Listing {
     pub options: Vec<ListingOption>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct Attributes {
     pub name: String,
     pub description: Option<String>,
     pub images: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct ListingOption {
     pub id: u64,
     pub name: String,
@@ -29,7 +28,7 @@ pub struct ListingOption {
     pub options: Vec<ListingOptionItem>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct ListingOptionItem {
     pub name: String,
     pub cost: Option<Cw20Coin>,

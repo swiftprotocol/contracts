@@ -1,12 +1,11 @@
+use cosmwasm_schema::cw_serde;
 use cosmwasm_std::Addr;
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
 
 use cw_storage_plus::Item;
 
 use super::listing::Listing;
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct Config {
     /// Address of the CW20 contract to be used as a denom for this site
     pub denom: Addr,
@@ -18,7 +17,7 @@ pub struct Config {
     pub trust_contract: Addr,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct Marketing {
     /// Name of the site
     pub name: String,
@@ -41,13 +40,13 @@ pub struct Marketing {
     pub socials: Vec<Social>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct Social {
     pub network: Network,
     pub url: String,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub enum Network {
     Twitter,
     Facebook,

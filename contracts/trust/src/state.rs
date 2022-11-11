@@ -1,10 +1,9 @@
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
+use cosmwasm_schema::cw_serde;
 
 use cosmwasm_std::{Addr, Decimal, Timestamp, Uint128};
 use cw_storage_plus::{Index, IndexList, IndexedMap, Item, Map, MultiIndex, UniqueIndex};
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct PendingReview {
     pub peer: Addr,
     pub reviewer: Addr,
@@ -41,13 +40,13 @@ pub fn pending_reviews<'a>() -> IndexedMap<'a, Addr, PendingReview, PendingRevie
     IndexedMap::new("pending_reviews", indexes)
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct TrustInfo {
     pub score: Decimal,
     pub data: TrustData,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct TrustData {
     /// Amount of days the user has been staking k tokens
     /// The timer resets if any tokens are undelegated
@@ -61,7 +60,7 @@ pub struct TrustData {
     pub rating: i64,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct TrustScoreParams {
     pub base_score: u64,
     pub rating_multiplier: u64,
@@ -71,7 +70,7 @@ pub struct TrustScoreParams {
     pub denom_multiplier: u128,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub enum ReviewResult {
     ThumbsUp,
     ThumbsDown,
@@ -79,7 +78,7 @@ pub enum ReviewResult {
 
 pub const TRUST_INFO: Map<&Addr, TrustInfo> = Map::new("trust_info");
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct Config {
     /// Address of the DAO governing the contract
     pub admin: Addr,

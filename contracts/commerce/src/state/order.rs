@@ -1,12 +1,11 @@
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
+use cosmwasm_schema::cw_serde;
 
 use cosmwasm_std::{Addr, StdResult, Storage};
 use cw_storage_plus::{Index, IndexList, IndexedMap, Item, UniqueIndex};
 
 use super::listing::ListingOptionItem;
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct Order {
     pub id: u64,
     pub buyer: Addr,
@@ -15,20 +14,20 @@ pub struct Order {
     pub tracking: Option<TrackingInfo>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct OrderItem {
     pub listing_id: u64,
     pub options: Vec<OrderOption>,
     pub amount: u64,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct OrderOption {
     pub option_id: u64,
     pub selected_option: ListingOptionItem,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub enum OrderStatus {
     Received,
     Fulfilling,
@@ -45,7 +44,7 @@ impl OrderStatus {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+#[cw_serde]
 pub struct TrackingInfo {
     pub provider: String,
     pub url: String,
