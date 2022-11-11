@@ -1,0 +1,45 @@
+[package]
+name = "commerce"
+authors = ["Josef Leventon <josefleventon@users.noreply.github.com>"]
+description = "Swift de-commerce contract"
+version     = { workspace = true }
+edition     = { workspace = true }
+homepage    = { workspace = true }
+repository  = { workspace = true }
+license     = { workspace = true }
+
+exclude = [
+  # Those files are rust-optimizer artifacts. You might want to commit them for convenience but they should not be part of the source code publication.
+  "artifacts/*",
+]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+backtraces = ["cosmwasm-std/backtraces"]
+# use library feature to disable all instantiate/execute/query exports
+library = []
+test-utils = []
+
+[dependencies]
+cosmwasm-schema = { workspace = true }
+cosmwasm-std = { workspace = true }
+cw-controllers = { workspace = true }
+cw-storage-plus = { workspace = true }
+cw-utils = { workspace = true }
+cw1 = { workspace = true }
+cw2 = { workspace = true }
+cw20 = { workspace = true }
+schemars = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+trust = { path = "../trust"}
+cw20-stake = { path = "../../submodules/dao-contracts/contracts/staking/cw20-stake" }
+
+[dev-dependencies]
+cw-multi-test = { workspace = true }
+cw20-base = { workspace = true }
+anyhow = "1"
+assert_matches = "1"
+derivative = "2"

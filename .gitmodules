@@ -1,0 +1,3 @@
+[submodule "dao-contracts"]
+	path = dao-contracts
+	url = https://github.com/da0-da0/dao-contracts

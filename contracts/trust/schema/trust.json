@@ -1,0 +1,461 @@
+{
+  "contract_name": "trust",
+  "contract_version": "0.13.0",
+  "idl_version": "1.0.0",
+  "instantiate": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "InstantiateMsg",
+    "type": "object",
+    "required": [
+      "maintainer",
+      "max_rating",
+      "max_staked_days",
+      "max_staked_tokens",
+      "review_interval",
+      "staking_contract",
+      "trust_score_params"
+    ],
+    "properties": {
+      "maintainer": {
+        "type": "string"
+      },
+      "max_rating": {
+        "type": "integer",
+        "format": "uint64",
+        "minimum": 0.0
+      },
+      "max_staked_days": {
+        "type": "integer",
+        "format": "uint64",
+        "minimum": 0.0
+      },
+      "max_staked_tokens": {
+        "$ref": "#/definitions/Uint128"
+      },
+      "review_interval": {
+        "type": "integer",
+        "format": "uint128",
+        "minimum": 0.0
+      },
+      "staking_contract": {
+        "type": "string"
+      },
+      "trust_score_params": {
+        "$ref": "#/definitions/TrustScoreParams"
+      }
+    },
+    "additionalProperties": false,
+    "definitions": {
+      "TrustScoreParams": {
+        "type": "object",
+        "required": [
+          "base_score",
+          "min_stake_days",
+          "rating_floor_denominator",
+          "rating_multiplier",
+          "stake_amount_denominator"
+        ],
+        "properties": {
+          "base_score": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "min_stake_days": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "rating_floor_denominator": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "rating_multiplier": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "stake_amount_denominator": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      },
+      "Uint128": {
+        "description": "A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.\n\n# Examples\n\nUse `from` to create instances of this and `u128` to get the value out:\n\n``` # use cosmwasm_std::Uint128; let a = Uint128::from(123u128); assert_eq!(a.u128(), 123);\n\nlet b = Uint128::from(42u64); assert_eq!(b.u128(), 42);\n\nlet c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```",
+        "type": "string"
+      }
+    }
+  },
+  "execute": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "ExecuteMsg",
+    "oneOf": [
+      {
+        "description": "--- DAO-RESTRICTED --- UpdateConfig makes changes to the contract's configuration",
+        "type": "object",
+        "required": [
+          "update_config"
+        ],
+        "properties": {
+          "update_config": {
+            "type": "object",
+            "required": [
+              "admin",
+              "maintainer",
+              "max_rating",
+              "max_staked_days",
+              "max_staked_tokens",
+              "review_interval",
+              "staking_contract",
+              "trust_score_params"
+            ],
+            "properties": {
+              "admin": {
+                "description": "Address of the DAO governing the contract",
+                "type": "string"
+              },
+              "maintainer": {
+                "description": "Address of the client used for updating staking info",
+                "type": "string"
+              },
+              "max_rating": {
+                "description": "Maximum rating score (prevents inflated scores)",
+                "type": "integer",
+                "format": "int64"
+              },
+              "max_staked_days": {
+                "description": "Max amount of days staked taken into consideration for the staking calc",
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              },
+              "max_staked_tokens": {
+                "description": "Max amount of tokens taken into consideration for the staking calculation",
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/Uint128"
+                  }
+                ]
+              },
+              "review_interval": {
+                "description": "Interval between reviews in seconds",
+                "type": "integer",
+                "format": "uint128",
+                "minimum": 0.0
+              },
+              "staking_contract": {
+                "description": "CW20 staking contract",
+                "type": "string"
+              },
+              "trust_score_params": {
+                "description": "How we calculate the trust score Should be adjusted based on token allocation/price/TVL",
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/TrustScoreParams"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "--- PRIVILEGED --- UpdateStakingInfo re-queries the staking information for a specific address and updates their trust score.",
+        "type": "object",
+        "required": [
+          "update_staking_info"
+        ],
+        "properties": {
+          "update_staking_info": {
+            "type": "object",
+            "required": [
+              "address"
+            ],
+            "properties": {
+              "address": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "--- USER-FACING --- Review allows a user to leave a thumbs-up/down review to another user if there is a pending review.",
+        "type": "object",
+        "required": [
+          "review"
+        ],
+        "properties": {
+          "review": {
+            "type": "object",
+            "required": [
+              "address",
+              "result"
+            ],
+            "properties": {
+              "address": {
+                "type": "string"
+              },
+              "result": {
+                "$ref": "#/definitions/ReviewResult"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    ],
+    "definitions": {
+      "ReviewResult": {
+        "type": "string",
+        "enum": [
+          "ThumbsUp",
+          "ThumbsDown"
+        ]
+      },
+      "TrustScoreParams": {
+        "type": "object",
+        "required": [
+          "base_score",
+          "min_stake_days",
+          "rating_floor_denominator",
+          "rating_multiplier",
+          "stake_amount_denominator"
+        ],
+        "properties": {
+          "base_score": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "min_stake_days": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "rating_floor_denominator": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "rating_multiplier": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "stake_amount_denominator": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        }
+      },
+      "Uint128": {
+        "description": "A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.\n\n# Examples\n\nUse `from` to create instances of this and `u128` to get the value out:\n\n``` # use cosmwasm_std::Uint128; let a = Uint128::from(123u128); assert_eq!(a.u128(), 123);\n\nlet b = Uint128::from(42u64); assert_eq!(b.u128(), 42);\n\nlet c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```",
+        "type": "string"
+      }
+    }
+  },
+  "query": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "QueryMsg",
+    "oneOf": [
+      {
+        "description": "--- ADMINISTRATION --- --- USER-FACING --- Get an address' trust info.",
+        "type": "object",
+        "required": [
+          "trust_info"
+        ],
+        "properties": {
+          "trust_info": {
+            "type": "object",
+            "required": [
+              "address"
+            ],
+            "properties": {
+              "address": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "Get an address' staking info.",
+        "type": "object",
+        "required": [
+          "stake_amount"
+        ],
+        "properties": {
+          "stake_amount": {
+            "type": "object",
+            "required": [
+              "address"
+            ],
+            "properties": {
+              "address": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "Get all trust accounts.",
+        "type": "object",
+        "required": [
+          "accounts"
+        ],
+        "properties": {
+          "accounts": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    ]
+  },
+  "migrate": null,
+  "sudo": null,
+  "responses": {
+    "accounts": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AccountsResponse",
+      "type": "object",
+      "required": [
+        "accounts"
+      ],
+      "properties": {
+        "accounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Addr"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "definitions": {
+        "Addr": {
+          "description": "A human readable address.\n\nIn Cosmos, this is typically bech32 encoded. But for multi-chain smart contracts no assumptions should be made other than being UTF-8 encoded and of reasonable length.\n\nThis type represents a validated address. It can be created in the following ways 1. Use `Addr::unchecked(input)` 2. Use `let checked: Addr = deps.api.addr_validate(input)?` 3. Use `let checked: Addr = deps.api.addr_humanize(canonical_addr)?` 4. Deserialize from JSON. This must only be done from JSON that was validated before such as a contract's state. `Addr` must not be used in messages sent by the user because this would result in unvalidated instances.\n\nThis type is immutable. If you really need to mutate it (Really? Are you sure?), create a mutable copy using `let mut mutable = Addr::to_string()` and operate on that `String` instance.",
+          "type": "string"
+        }
+      }
+    },
+    "stake_amount": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "StakeAmountResponse",
+      "type": "object",
+      "properties": {
+        "stake_amount": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Uint128"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "definitions": {
+        "Uint128": {
+          "description": "A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.\n\n# Examples\n\nUse `from` to create instances of this and `u128` to get the value out:\n\n``` # use cosmwasm_std::Uint128; let a = Uint128::from(123u128); assert_eq!(a.u128(), 123);\n\nlet b = Uint128::from(42u64); assert_eq!(b.u128(), 42);\n\nlet c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```",
+          "type": "string"
+        }
+      }
+    },
+    "trust_info": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "TrustInfoResponse",
+      "type": "object",
+      "properties": {
+        "trust_info": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/TrustInfo"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "definitions": {
+        "TrustData": {
+          "type": "object",
+          "required": [
+            "prev_stake_amount",
+            "rating",
+            "stake_amount",
+            "stake_days"
+          ],
+          "properties": {
+            "prev_stake_amount": {
+              "description": "Amount of tokens staked, as queried in the previous run",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/Uint128"
+                }
+              ]
+            },
+            "rating": {
+              "description": "Rating score, as defined by thumbs-up/down reviews and dispute decisions Thumbs up +1, Thumbs down -1, Win dispute +0, Lose dispute -5",
+              "type": "integer",
+              "format": "int64"
+            },
+            "stake_amount": {
+              "description": "Amount of tokens currently staked",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/Uint128"
+                }
+              ]
+            },
+            "stake_days": {
+              "description": "Amount of days the user has been staking k tokens The timer resets if any tokens are undelegated",
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            }
+          }
+        },
+        "TrustInfo": {
+          "type": "object",
+          "required": [
+            "data",
+            "score"
+          ],
+          "properties": {
+            "data": {
+              "$ref": "#/definitions/TrustData"
+            },
+            "score": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            }
+          }
+        },
+        "Uint128": {
+          "description": "A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.\n\n# Examples\n\nUse `from` to create instances of this and `u128` to get the value out:\n\n``` # use cosmwasm_std::Uint128; let a = Uint128::from(123u128); assert_eq!(a.u128(), 123);\n\nlet b = Uint128::from(42u64); assert_eq!(b.u128(), 42);\n\nlet c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

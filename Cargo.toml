@@ -1,0 +1,43 @@
+[workspace]
+members = ["contracts/*", "dao-contracts/contracts/staking/*"]
+resolver = "2"
+
+[workspace.package]
+version    = "0.13.0"
+edition    = "2021"
+homepage   = "https://swiftprotocol.zone"
+repository = "https://github.com/swiftprotocol/contracts"
+license    = "Apache-2.0"
+
+[workspace.dependencies]
+cosmwasm-schema   = "1.1.5"
+cosmwasm-std      = "1.1.5"
+cw1               = "0.16.0"
+cw2               = "0.16.0"
+cw20              = "0.16.0"
+cw20-base         = "0.16.0"
+cw-controllers    = "0.16.0"
+cw-multi-test     = "0.16.0"
+cw-storage-macro  = "0.16.0"
+cw-storage-plus   = "0.16.0"
+cw-utils          = "0.16.0"
+schemars          = "0.8.11"
+semver            = "1"
+serde             = { version = "1.0.145", default-features = false, features = ["derive"] }
+thiserror         = "1.0.31"
+
+[profile.release.package.commerce]
+codegen-units = 1
+incremental = false
+
+[profile.release.package.trust]
+codegen-units = 1
+incremental = false
+
+[profile.release]
+rpath = false
+lto = true
+overflow-checks = true
+opt-level = 3
+debug = false
+debug-assertions = false

@@ -1,0 +1,1842 @@
+{
+  "contract_name": "commerce",
+  "contract_version": "0.13.0",
+  "idl_version": "1.0.0",
+  "instantiate": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "InstantiateMsg",
+    "type": "object",
+    "required": [
+      "admins"
+    ],
+    "properties": {
+      "admins": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "additionalProperties": false
+  },
+  "execute": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "ExecuteMsg",
+    "oneOf": [
+      {
+        "description": "--- ADMINISTRATION --- UpdateAdmins will change the admin set of the contract, must be called by an existing admin.",
+        "type": "object",
+        "required": [
+          "update_admins"
+        ],
+        "properties": {
+          "update_admins": {
+            "type": "object",
+            "required": [
+              "admins"
+            ],
+            "properties": {
+              "admins": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "UpdateConfig will make changes to the site's configuration.",
+        "type": "object",
+        "required": [
+          "update_config"
+        ],
+        "properties": {
+          "update_config": {
+            "type": "object",
+            "required": [
+              "config"
+            ],
+            "properties": {
+              "config": {
+                "$ref": "#/definitions/Config"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "UpdateMarketing will make changes to the social/marketing aspects of the site.",
+        "type": "object",
+        "required": [
+          "update_marketing"
+        ],
+        "properties": {
+          "update_marketing": {
+            "type": "object",
+            "required": [
+              "marketing"
+            ],
+            "properties": {
+              "marketing": {
+                "$ref": "#/definitions/Marketing"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "Withdraw all or a specific amount of currently available funds.",
+        "type": "object",
+        "required": [
+          "withdraw"
+        ],
+        "properties": {
+          "withdraw": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/Uint128"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "--- SELLER-FACING --- CreateListing will create a new item to be displayed on the site.",
+        "type": "object",
+        "required": [
+          "create_listing"
+        ],
+        "properties": {
+          "create_listing": {
+            "type": "object",
+            "required": [
+              "active",
+              "attributes",
+              "options",
+              "price"
+            ],
+            "properties": {
+              "active": {
+                "type": "boolean"
+              },
+              "attributes": {
+                "$ref": "#/definitions/Attributes"
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/ListingOption"
+                }
+              },
+              "price": {
+                "$ref": "#/definitions/Uint128"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "UpdateListing will make modifications to an existing listing.",
+        "type": "object",
+        "required": [
+          "update_listing"
+        ],
+        "properties": {
+          "update_listing": {
+            "type": "object",
+            "required": [
+              "active",
+              "attributes",
+              "id",
+              "options",
+              "price"
+            ],
+            "properties": {
+              "active": {
+                "type": "boolean"
+              },
+              "attributes": {
+                "$ref": "#/definitions/Attributes"
+              },
+              "id": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/ListingOption"
+                }
+              },
+              "price": {
+                "$ref": "#/definitions/Uint128"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "DeleteListing will remove an existing listing from the site.",
+        "type": "object",
+        "required": [
+          "delete_listing"
+        ],
+        "properties": {
+          "delete_listing": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "UpdateOrder will update the status and the tracking info of an order.",
+        "type": "object",
+        "required": [
+          "update_order"
+        ],
+        "properties": {
+          "update_order": {
+            "type": "object",
+            "required": [
+              "id",
+              "status"
+            ],
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              },
+              "status": {
+                "$ref": "#/definitions/OrderStatus"
+              },
+              "tracking": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/TrackingInfo"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "CompleteOrder will remove an order and mark it as completed.",
+        "type": "object",
+        "required": [
+          "complete_order"
+        ],
+        "properties": {
+          "complete_order": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "RefundOrder will completely cancel an order and refund the buyer.",
+        "type": "object",
+        "required": [
+          "refund_order"
+        ],
+        "properties": {
+          "refund_order": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "--- BUYER-FACING --- CreateOrder will create a new order for one or more items on the site.",
+        "type": "object",
+        "required": [
+          "create_order"
+        ],
+        "properties": {
+          "create_order": {
+            "type": "object",
+            "required": [
+              "items"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/OrderItem"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "CancelOrder will cancel an order & refund the buyer. Can only be called when the `Received` status is active. An order cannot be refunded once it is being fulfilled.",
+        "type": "object",
+        "required": [
+          "cancel_order"
+        ],
+        "properties": {
+          "cancel_order": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "receive"
+        ],
+        "properties": {
+          "receive": {
+            "$ref": "#/definitions/Cw20ReceiveMsg"
+          }
+        },
+        "additionalProperties": false
+      }
+    ],
+    "definitions": {
+      "Attributes": {
+        "type": "object",
+        "required": [
+          "images",
+          "name"
+        ],
+        "properties": {
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Binary": {
+        "description": "Binary is a wrapper around Vec<u8> to add base64 de/serialization with serde. It also adds some helper methods to help encode inline.\n\nThis is only needed as serde-json-{core,wasm} has a horrible encoding for Vec<u8>. See also <https://github.com/CosmWasm/cosmwasm/blob/main/docs/MESSAGE_TYPES.md>.",
+        "type": "string"
+      },
+      "Config": {
+        "type": "object",
+        "required": [
+          "denom",
+          "withdrawal_address"
+        ],
+        "properties": {
+          "denom": {
+            "description": "Address of the CW20 contract to be used as a denom for this site",
+            "type": "string"
+          },
+          "withdrawal_address": {
+            "description": "Address to which funds held by the contract can be withdrawn",
+            "type": "string"
+          }
+        }
+      },
+      "Cw20Coin": {
+        "type": "object",
+        "required": [
+          "address",
+          "amount"
+        ],
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "amount": {
+            "$ref": "#/definitions/Uint128"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Cw20ReceiveMsg": {
+        "description": "Cw20ReceiveMsg should be de/serialized under `Receive()` variant in a ExecuteMsg",
+        "type": "object",
+        "required": [
+          "amount",
+          "msg",
+          "sender"
+        ],
+        "properties": {
+          "amount": {
+            "$ref": "#/definitions/Uint128"
+          },
+          "msg": {
+            "$ref": "#/definitions/Binary"
+          },
+          "sender": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Listing": {
+        "type": "object",
+        "required": [
+          "active",
+          "attributes",
+          "id",
+          "options",
+          "price"
+        ],
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "attributes": {
+            "$ref": "#/definitions/Attributes"
+          },
+          "id": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ListingOption"
+            }
+          },
+          "price": {
+            "$ref": "#/definitions/Cw20Coin"
+          }
+        }
+      },
+      "ListingOption": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "options"
+        ],
+        "properties": {
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "name": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/ListingOptionItem"
+            }
+          }
+        }
+      },
+      "ListingOptionItem": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "cost": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Cw20Coin"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Marketing": {
+        "type": "object",
+        "required": [
+          "featured_listings",
+          "name",
+          "socials"
+        ],
+        "properties": {
+          "copyright": {
+            "description": "Copyright info for the site (optional) Format: \"Josef's Store 2022\" The frontend will insert the © symbol",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "featured_listings": {
+            "description": "Array of featured listings (optional) These will appear at the top of the site",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Listing"
+            }
+          },
+          "logo": {
+            "description": "URL to hosted logo for the site (optional) The frontend will fall back to a text logo based on `name`",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "description": "Name of the site",
+            "type": "string"
+          },
+          "socials": {
+            "description": "Array of socials (optional) See `Network` enum below for supported socials",
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Social"
+            }
+          }
+        }
+      },
+      "Network": {
+        "type": "string",
+        "enum": [
+          "Twitter",
+          "Facebook",
+          "GitHub",
+          "LinkedIn",
+          "Instagram",
+          "YouTube",
+          "Reddit",
+          "Medium",
+          "Discord",
+          "TikTok",
+          "Twitch"
+        ]
+      },
+      "OrderItem": {
+        "type": "object",
+        "required": [
+          "amount",
+          "listing_id",
+          "options"
+        ],
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "listing_id": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/OrderOption"
+            }
+          }
+        }
+      },
+      "OrderOption": {
+        "type": "object",
+        "required": [
+          "option_id",
+          "selected_option"
+        ],
+        "properties": {
+          "option_id": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          },
+          "selected_option": {
+            "$ref": "#/definitions/ListingOptionItem"
+          }
+        }
+      },
+      "OrderStatus": {
+        "type": "string",
+        "enum": [
+          "Received",
+          "Fulfilling",
+          "Shipped"
+        ]
+      },
+      "Social": {
+        "type": "object",
+        "required": [
+          "network",
+          "url"
+        ],
+        "properties": {
+          "network": {
+            "$ref": "#/definitions/Network"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "TrackingInfo": {
+        "type": "object",
+        "required": [
+          "provider",
+          "url"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "Uint128": {
+        "description": "A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.\n\n# Examples\n\nUse `from` to create instances of this and `u128` to get the value out:\n\n``` # use cosmwasm_std::Uint128; let a = Uint128::from(123u128); assert_eq!(a.u128(), 123);\n\nlet b = Uint128::from(42u64); assert_eq!(b.u128(), 42);\n\nlet c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```",
+        "type": "string"
+      }
+    }
+  },
+  "query": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "QueryMsg",
+    "oneOf": [
+      {
+        "description": "--- ADMINISTRATION --- Returns the site's configuration",
+        "type": "object",
+        "required": [
+          "config"
+        ],
+        "properties": {
+          "config": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "Returns a list of administrators",
+        "type": "object",
+        "required": [
+          "admin_list"
+        ],
+        "properties": {
+          "admin_list": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "Checks permissions of the caller on this contract",
+        "type": "object",
+        "required": [
+          "can_execute"
+        ],
+        "properties": {
+          "can_execute": {
+            "type": "object",
+            "required": [
+              "sender"
+            ],
+            "properties": {
+              "sender": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "Returns the amount of tokens that can be withdrawn from the contract",
+        "type": "object",
+        "required": [
+          "withdrawable_balance"
+        ],
+        "properties": {
+          "withdrawable_balance": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "Returns the amount of tokens that are locked up in active orderes",
+        "type": "object",
+        "required": [
+          "locked_balance"
+        ],
+        "properties": {
+          "locked_balance": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "--- SITE INFO --- Returns the site's marketing info Marketing defines the style of the site It is fetched every time the site is opened, eliminating the need for the frontend to be redeployed to make changes to the styling. This includes featured items, the logo, etc...",
+        "type": "object",
+        "required": [
+          "marketing"
+        ],
+        "properties": {
+          "marketing": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "--- USER-FACING --- Get single or all orders",
+        "type": "object",
+        "required": [
+          "orders"
+        ],
+        "properties": {
+          "orders": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "order"
+        ],
+        "properties": {
+          "order": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "description": "Get single or all listings",
+        "type": "object",
+        "required": [
+          "listings"
+        ],
+        "properties": {
+          "listings": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "required": [
+          "listing"
+        ],
+        "properties": {
+          "listing": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "uint64",
+                "minimum": 0.0
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    ]
+  },
+  "migrate": null,
+  "sudo": null,
+  "responses": {
+    "admin_list": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AdminListResponse",
+      "type": "object",
+      "required": [
+        "admins"
+      ],
+      "properties": {
+        "admins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "can_execute": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CanExecuteResponse",
+      "type": "object",
+      "required": [
+        "can_execute"
+      ],
+      "properties": {
+        "can_execute": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "config": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ConfigResponse",
+      "type": "object",
+      "required": [
+        "config"
+      ],
+      "properties": {
+        "config": {
+          "$ref": "#/definitions/Config"
+        }
+      },
+      "additionalProperties": false,
+      "definitions": {
+        "Config": {
+          "type": "object",
+          "required": [
+            "denom",
+            "withdrawal_address"
+          ],
+          "properties": {
+            "denom": {
+              "description": "Address of the CW20 contract to be used as a denom for this site",
+              "type": "string"
+            },
+            "withdrawal_address": {
+              "description": "Address to which funds held by the contract can be withdrawn",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "listing": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ListingResponse",
+      "type": "object",
+      "properties": {
+        "listing": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Listing"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "definitions": {
+        "Attributes": {
+          "type": "object",
+          "required": [
+            "images",
+            "name"
+          ],
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "images": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        "Cw20Coin": {
+          "type": "object",
+          "required": [
+            "address",
+            "amount"
+          ],
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "amount": {
+              "$ref": "#/definitions/Uint128"
+            }
+          },
+          "additionalProperties": false
+        },
+        "Listing": {
+          "type": "object",
+          "required": [
+            "active",
+            "attributes",
+            "id",
+            "options",
+            "price"
+          ],
+          "properties": {
+            "active": {
+              "type": "boolean"
+            },
+            "attributes": {
+              "$ref": "#/definitions/Attributes"
+            },
+            "id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ListingOption"
+              }
+            },
+            "price": {
+              "$ref": "#/definitions/Cw20Coin"
+            }
+          }
+        },
+        "ListingOption": {
+          "type": "object",
+          "required": [
+            "id",
+            "name",
+            "options"
+          ],
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "name": {
+              "type": "string"
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ListingOptionItem"
+              }
+            }
+          }
+        },
+        "ListingOptionItem": {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "cost": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Cw20Coin"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        "Uint128": {
+          "description": "A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.\n\n# Examples\n\nUse `from` to create instances of this and `u128` to get the value out:\n\n``` # use cosmwasm_std::Uint128; let a = Uint128::from(123u128); assert_eq!(a.u128(), 123);\n\nlet b = Uint128::from(42u64); assert_eq!(b.u128(), 42);\n\nlet c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```",
+          "type": "string"
+        }
+      }
+    },
+    "listings": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ListingsResponse",
+      "type": "object",
+      "required": [
+        "listings"
+      ],
+      "properties": {
+        "listings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Listing"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "definitions": {
+        "Attributes": {
+          "type": "object",
+          "required": [
+            "images",
+            "name"
+          ],
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "images": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        "Cw20Coin": {
+          "type": "object",
+          "required": [
+            "address",
+            "amount"
+          ],
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "amount": {
+              "$ref": "#/definitions/Uint128"
+            }
+          },
+          "additionalProperties": false
+        },
+        "Listing": {
+          "type": "object",
+          "required": [
+            "active",
+            "attributes",
+            "id",
+            "options",
+            "price"
+          ],
+          "properties": {
+            "active": {
+              "type": "boolean"
+            },
+            "attributes": {
+              "$ref": "#/definitions/Attributes"
+            },
+            "id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ListingOption"
+              }
+            },
+            "price": {
+              "$ref": "#/definitions/Cw20Coin"
+            }
+          }
+        },
+        "ListingOption": {
+          "type": "object",
+          "required": [
+            "id",
+            "name",
+            "options"
+          ],
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "name": {
+              "type": "string"
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ListingOptionItem"
+              }
+            }
+          }
+        },
+        "ListingOptionItem": {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "cost": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Cw20Coin"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        "Uint128": {
+          "description": "A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.\n\n# Examples\n\nUse `from` to create instances of this and `u128` to get the value out:\n\n``` # use cosmwasm_std::Uint128; let a = Uint128::from(123u128); assert_eq!(a.u128(), 123);\n\nlet b = Uint128::from(42u64); assert_eq!(b.u128(), 42);\n\nlet c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```",
+          "type": "string"
+        }
+      }
+    },
+    "locked_balance": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "BalanceResponse",
+      "type": "object",
+      "required": [
+        "balance"
+      ],
+      "properties": {
+        "balance": {
+          "$ref": "#/definitions/Cw20Coin"
+        }
+      },
+      "additionalProperties": false,
+      "definitions": {
+        "Cw20Coin": {
+          "type": "object",
+          "required": [
+            "address",
+            "amount"
+          ],
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "amount": {
+              "$ref": "#/definitions/Uint128"
+            }
+          },
+          "additionalProperties": false
+        },
+        "Uint128": {
+          "description": "A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.\n\n# Examples\n\nUse `from` to create instances of this and `u128` to get the value out:\n\n``` # use cosmwasm_std::Uint128; let a = Uint128::from(123u128); assert_eq!(a.u128(), 123);\n\nlet b = Uint128::from(42u64); assert_eq!(b.u128(), 42);\n\nlet c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```",
+          "type": "string"
+        }
+      }
+    },
+    "marketing": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "MarketingResponse",
+      "type": "object",
+      "required": [
+        "marketing"
+      ],
+      "properties": {
+        "marketing": {
+          "$ref": "#/definitions/Marketing"
+        }
+      },
+      "additionalProperties": false,
+      "definitions": {
+        "Attributes": {
+          "type": "object",
+          "required": [
+            "images",
+            "name"
+          ],
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "images": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        "Cw20Coin": {
+          "type": "object",
+          "required": [
+            "address",
+            "amount"
+          ],
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "amount": {
+              "$ref": "#/definitions/Uint128"
+            }
+          },
+          "additionalProperties": false
+        },
+        "Listing": {
+          "type": "object",
+          "required": [
+            "active",
+            "attributes",
+            "id",
+            "options",
+            "price"
+          ],
+          "properties": {
+            "active": {
+              "type": "boolean"
+            },
+            "attributes": {
+              "$ref": "#/definitions/Attributes"
+            },
+            "id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ListingOption"
+              }
+            },
+            "price": {
+              "$ref": "#/definitions/Cw20Coin"
+            }
+          }
+        },
+        "ListingOption": {
+          "type": "object",
+          "required": [
+            "id",
+            "name",
+            "options"
+          ],
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "name": {
+              "type": "string"
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ListingOptionItem"
+              }
+            }
+          }
+        },
+        "ListingOptionItem": {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "cost": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Cw20Coin"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        "Marketing": {
+          "type": "object",
+          "required": [
+            "featured_listings",
+            "name",
+            "socials"
+          ],
+          "properties": {
+            "copyright": {
+              "description": "Copyright info for the site (optional) Format: \"Josef's Store 2022\" The frontend will insert the © symbol",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "featured_listings": {
+              "description": "Array of featured listings (optional) These will appear at the top of the site",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Listing"
+              }
+            },
+            "logo": {
+              "description": "URL to hosted logo for the site (optional) The frontend will fall back to a text logo based on `name`",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "description": "Name of the site",
+              "type": "string"
+            },
+            "socials": {
+              "description": "Array of socials (optional) See `Network` enum below for supported socials",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Social"
+              }
+            }
+          }
+        },
+        "Network": {
+          "type": "string",
+          "enum": [
+            "Twitter",
+            "Facebook",
+            "GitHub",
+            "LinkedIn",
+            "Instagram",
+            "YouTube",
+            "Reddit",
+            "Medium",
+            "Discord",
+            "TikTok",
+            "Twitch"
+          ]
+        },
+        "Social": {
+          "type": "object",
+          "required": [
+            "network",
+            "url"
+          ],
+          "properties": {
+            "network": {
+              "$ref": "#/definitions/Network"
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        },
+        "Uint128": {
+          "description": "A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.\n\n# Examples\n\nUse `from` to create instances of this and `u128` to get the value out:\n\n``` # use cosmwasm_std::Uint128; let a = Uint128::from(123u128); assert_eq!(a.u128(), 123);\n\nlet b = Uint128::from(42u64); assert_eq!(b.u128(), 42);\n\nlet c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```",
+          "type": "string"
+        }
+      }
+    },
+    "order": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "OrderResponse",
+      "type": "object",
+      "properties": {
+        "order": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Order"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "definitions": {
+        "Addr": {
+          "description": "A human readable address.\n\nIn Cosmos, this is typically bech32 encoded. But for multi-chain smart contracts no assumptions should be made other than being UTF-8 encoded and of reasonable length.\n\nThis type represents a validated address. It can be created in the following ways 1. Use `Addr::unchecked(input)` 2. Use `let checked: Addr = deps.api.addr_validate(input)?` 3. Use `let checked: Addr = deps.api.addr_humanize(canonical_addr)?` 4. Deserialize from JSON. This must only be done from JSON that was validated before such as a contract's state. `Addr` must not be used in messages sent by the user because this would result in unvalidated instances.\n\nThis type is immutable. If you really need to mutate it (Really? Are you sure?), create a mutable copy using `let mut mutable = Addr::to_string()` and operate on that `String` instance.",
+          "type": "string"
+        },
+        "Cw20Coin": {
+          "type": "object",
+          "required": [
+            "address",
+            "amount"
+          ],
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "amount": {
+              "$ref": "#/definitions/Uint128"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ListingOptionItem": {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "cost": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Cw20Coin"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        "Order": {
+          "type": "object",
+          "required": [
+            "buyer",
+            "id",
+            "items",
+            "status"
+          ],
+          "properties": {
+            "buyer": {
+              "$ref": "#/definitions/Addr"
+            },
+            "id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OrderItem"
+              }
+            },
+            "status": {
+              "$ref": "#/definitions/OrderStatus"
+            },
+            "tracking": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TrackingInfo"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "OrderItem": {
+          "type": "object",
+          "required": [
+            "amount",
+            "listing_id",
+            "options"
+          ],
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "listing_id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OrderOption"
+              }
+            }
+          }
+        },
+        "OrderOption": {
+          "type": "object",
+          "required": [
+            "option_id",
+            "selected_option"
+          ],
+          "properties": {
+            "option_id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "selected_option": {
+              "$ref": "#/definitions/ListingOptionItem"
+            }
+          }
+        },
+        "OrderStatus": {
+          "type": "string",
+          "enum": [
+            "Received",
+            "Fulfilling",
+            "Shipped"
+          ]
+        },
+        "TrackingInfo": {
+          "type": "object",
+          "required": [
+            "provider",
+            "url"
+          ],
+          "properties": {
+            "provider": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        },
+        "Uint128": {
+          "description": "A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.\n\n# Examples\n\nUse `from` to create instances of this and `u128` to get the value out:\n\n``` # use cosmwasm_std::Uint128; let a = Uint128::from(123u128); assert_eq!(a.u128(), 123);\n\nlet b = Uint128::from(42u64); assert_eq!(b.u128(), 42);\n\nlet c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```",
+          "type": "string"
+        }
+      }
+    },
+    "orders": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "OrdersResponse",
+      "type": "object",
+      "required": [
+        "orders"
+      ],
+      "properties": {
+        "orders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Order"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "definitions": {
+        "Addr": {
+          "description": "A human readable address.\n\nIn Cosmos, this is typically bech32 encoded. But for multi-chain smart contracts no assumptions should be made other than being UTF-8 encoded and of reasonable length.\n\nThis type represents a validated address. It can be created in the following ways 1. Use `Addr::unchecked(input)` 2. Use `let checked: Addr = deps.api.addr_validate(input)?` 3. Use `let checked: Addr = deps.api.addr_humanize(canonical_addr)?` 4. Deserialize from JSON. This must only be done from JSON that was validated before such as a contract's state. `Addr` must not be used in messages sent by the user because this would result in unvalidated instances.\n\nThis type is immutable. If you really need to mutate it (Really? Are you sure?), create a mutable copy using `let mut mutable = Addr::to_string()` and operate on that `String` instance.",
+          "type": "string"
+        },
+        "Cw20Coin": {
+          "type": "object",
+          "required": [
+            "address",
+            "amount"
+          ],
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "amount": {
+              "$ref": "#/definitions/Uint128"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ListingOptionItem": {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "cost": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/Cw20Coin"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        "Order": {
+          "type": "object",
+          "required": [
+            "buyer",
+            "id",
+            "items",
+            "status"
+          ],
+          "properties": {
+            "buyer": {
+              "$ref": "#/definitions/Addr"
+            },
+            "id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OrderItem"
+              }
+            },
+            "status": {
+              "$ref": "#/definitions/OrderStatus"
+            },
+            "tracking": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/TrackingInfo"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "OrderItem": {
+          "type": "object",
+          "required": [
+            "amount",
+            "listing_id",
+            "options"
+          ],
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "listing_id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "options": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OrderOption"
+              }
+            }
+          }
+        },
+        "OrderOption": {
+          "type": "object",
+          "required": [
+            "option_id",
+            "selected_option"
+          ],
+          "properties": {
+            "option_id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "selected_option": {
+              "$ref": "#/definitions/ListingOptionItem"
+            }
+          }
+        },
+        "OrderStatus": {
+          "type": "string",
+          "enum": [
+            "Received",
+            "Fulfilling",
+            "Shipped"
+          ]
+        },
+        "TrackingInfo": {
+          "type": "object",
+          "required": [
+            "provider",
+            "url"
+          ],
+          "properties": {
+            "provider": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        },
+        "Uint128": {
+          "description": "A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.\n\n# Examples\n\nUse `from` to create instances of this and `u128` to get the value out:\n\n``` # use cosmwasm_std::Uint128; let a = Uint128::from(123u128); assert_eq!(a.u128(), 123);\n\nlet b = Uint128::from(42u64); assert_eq!(b.u128(), 42);\n\nlet c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```",
+          "type": "string"
+        }
+      }
+    },
+    "withdrawable_balance": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "BalanceResponse",
+      "type": "object",
+      "required": [
+        "balance"
+      ],
+      "properties": {
+        "balance": {
+          "$ref": "#/definitions/Cw20Coin"
+        }
+      },
+      "additionalProperties": false,
+      "definitions": {
+        "Cw20Coin": {
+          "type": "object",
+          "required": [
+            "address",
+            "amount"
+          ],
+          "properties": {
+            "address": {
+              "type": "string"
+            },
+            "amount": {
+              "$ref": "#/definitions/Uint128"
+            }
+          },
+          "additionalProperties": false
+        },
+        "Uint128": {
+          "description": "A thin wrapper around u128 that is using strings for JSON encoding/decoding, such that the full u128 range can be used for clients that convert JSON numbers to floats, like JavaScript and jq.\n\n# Examples\n\nUse `from` to create instances of this and `u128` to get the value out:\n\n``` # use cosmwasm_std::Uint128; let a = Uint128::from(123u128); assert_eq!(a.u128(), 123);\n\nlet b = Uint128::from(42u64); assert_eq!(b.u128(), 42);\n\nlet c = Uint128::from(70u32); assert_eq!(c.u128(), 70); ```",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
