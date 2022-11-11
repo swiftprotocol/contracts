@@ -38,9 +38,8 @@ pub fn calculate_trust_score(trust_data: TrustData, config: Config) -> Decimal {
         / params.stake_amount_denominator as f64;
     let rating_denom_comp = trust_data.rating as f64 / params.rating_floor_denominator as f64;
 
-    let score =
-        params.base_score as f64 + rating_comp as f64 + staked_comp as f64 * stake_days as f64
-            - params.min_stake_days as f64 * rating_denom_comp;
+    let score = params.base_score as f64 + rating_comp as f64 + staked_comp * stake_days as f64
+        - params.min_stake_days as f64 * rating_denom_comp;
 
     let trust_score = match score < 0.0 {
         true => 0.0,
@@ -50,5 +49,5 @@ pub fn calculate_trust_score(trust_data: TrustData, config: Config) -> Decimal {
         },
     };
 
-    return Decimal::from_str(&trust_score.to_string()).unwrap();
+    Decimal::from_str(&trust_score.to_string()).unwrap()
 }

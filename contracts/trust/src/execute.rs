@@ -157,17 +157,14 @@ pub fn execute_register_pending_review(
     let pending_review = pending_reviews().may_load(deps.storage, peer.clone())?;
 
     // if there is a review that is expired, remove it
-    match pending_review {
-        Some(pending_review) => {
-            if env.block.time < pending_review.expires_at {
-                return Err(ContractError::AwaitingReview {
-                    reviewer: reviewer.to_string(),
-                });
-            }
-
-            pending_reviews().remove(deps.storage, peer.clone())?;
+    if let Some(pending_review) = pending_review {
+        if env.block.time < pending_review.expires_at {
+            return Err(ContractError::AwaitingReview {
+                reviewer: reviewer.to_string(),
+            });
         }
-        None => {}
+
+        pending_reviews().remove(deps.storage, peer.clone())?;
     }
 
     let expires_at = env.block.time.plus_seconds(config.review_interval);
@@ -177,7 +174,7 @@ pub fn execute_register_pending_review(
         reviewer: reviewer.clone(),
         commerce_contract: info.sender.clone(),
         order_id,
-        expires_at: expires_at.clone(),
+        expires_at,
     };
 
     // Save a new pending review
@@ -255,7 +252,7 @@ pub fn execute_review(
                     stake_days: 0,
                     stake_amount: Uint128::from(0u128),
                     prev_stake_amount: Uint128::from(0u128),
-                    rating: 0 + match review {
+                    rating: match review {
                         ReviewResult::ThumbsUp => 1,
                         ReviewResult::ThumbsDown => -1,
                     },
