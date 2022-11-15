@@ -6,9 +6,10 @@
 
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { Coin, StdFee } from "@cosmjs/amino";
-import { Uint128, InstantiateMsg, TrustScoreParams, ExecuteMsg, ReviewResult, QueryMsg, Addr, AccountsResponse, StakeAmountResponse, TrustInfoResponse, TrustInfo, TrustData } from "./Trust.types";
+import { Uint128, InstantiateMsg, TrustScoreParams, ExecuteMsg, ReviewResult, QueryMsg, Addr, AccountsResponse, ConfigResponse, Config, Timestamp, Uint64, PendingReviewResponse, PendingReview, PendingReviewsResponse, StakeAmountResponse, Decimal, TrustInfoResponse, TrustInfo, TrustData } from "./Trust.types";
 export interface TrustReadOnlyInterface {
   contractAddress: string;
+  config: () => Promise<ConfigResponse>;
   trustInfo: ({
     address
   }: {
@@ -20,6 +21,16 @@ export interface TrustReadOnlyInterface {
     address: string;
   }) => Promise<StakeAmountResponse>;
   accounts: () => Promise<AccountsResponse>;
+  pendingReview: ({
+    peer
+  }: {
+    peer: string;
+  }) => Promise<PendingReviewResponse>;
+  pendingReviewsByReviewer: ({
+    reviewer
+  }: {
+    reviewer: string;
+  }) => Promise<PendingReviewsResponse>;
 }
 export class TrustQueryClient implements TrustReadOnlyInterface {
   client: CosmWasmClient;
@@ -28,11 +39,19 @@ export class TrustQueryClient implements TrustReadOnlyInterface {
   constructor(client: CosmWasmClient, contractAddress: string) {
     this.client = client;
     this.contractAddress = contractAddress;
+    this.config = this.config.bind(this);
     this.trustInfo = this.trustInfo.bind(this);
     this.stakeAmount = this.stakeAmount.bind(this);
     this.accounts = this.accounts.bind(this);
+    this.pendingReview = this.pendingReview.bind(this);
+    this.pendingReviewsByReviewer = this.pendingReviewsByReviewer.bind(this);
   }
 
+  config = async (): Promise<ConfigResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      config: {}
+    });
+  };
   trustInfo = async ({
     address
   }: {
@@ -60,12 +79,35 @@ export class TrustQueryClient implements TrustReadOnlyInterface {
       accounts: {}
     });
   };
+  pendingReview = async ({
+    peer
+  }: {
+    peer: string;
+  }): Promise<PendingReviewResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      pending_review: {
+        peer
+      }
+    });
+  };
+  pendingReviewsByReviewer = async ({
+    reviewer
+  }: {
+    reviewer: string;
+  }): Promise<PendingReviewsResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      pending_reviews_by_reviewer: {
+        reviewer
+      }
+    });
+  };
 }
 export interface TrustInterface extends TrustReadOnlyInterface {
   contractAddress: string;
   sender: string;
   updateConfig: ({
     admin,
+    commerceCodeId,
     maintainer,
     maxRating,
     maxStakedDays,
@@ -75,6 +117,7 @@ export interface TrustInterface extends TrustReadOnlyInterface {
     trustScoreParams
   }: {
     admin: string;
+    commerceCodeId: number;
     maintainer: string;
     maxRating: number;
     maxStakedDays: number;
@@ -88,12 +131,21 @@ export interface TrustInterface extends TrustReadOnlyInterface {
   }: {
     address: string;
   }, fee?: number | StdFee | "auto", memo?: string, funds?: Coin[]) => Promise<ExecuteResult>;
+  registerPendingReview: ({
+    orderId,
+    peer,
+    reviewer
+  }: {
+    orderId: number;
+    peer: string;
+    reviewer: string;
+  }, fee?: number | StdFee | "auto", memo?: string, funds?: Coin[]) => Promise<ExecuteResult>;
   review: ({
     address,
-    result
+    review
   }: {
     address: string;
-    result: ReviewResult;
+    review: ReviewResult;
   }, fee?: number | StdFee | "auto", memo?: string, funds?: Coin[]) => Promise<ExecuteResult>;
 }
 export class TrustClient extends TrustQueryClient implements TrustInterface {
@@ -108,11 +160,13 @@ export class TrustClient extends TrustQueryClient implements TrustInterface {
     this.contractAddress = contractAddress;
     this.updateConfig = this.updateConfig.bind(this);
     this.updateStakingInfo = this.updateStakingInfo.bind(this);
+    this.registerPendingReview = this.registerPendingReview.bind(this);
     this.review = this.review.bind(this);
   }
 
   updateConfig = async ({
     admin,
+    commerceCodeId,
     maintainer,
     maxRating,
     maxStakedDays,
@@ -122,6 +176,7 @@ export class TrustClient extends TrustQueryClient implements TrustInterface {
     trustScoreParams
   }: {
     admin: string;
+    commerceCodeId: number;
     maintainer: string;
     maxRating: number;
     maxStakedDays: number;
@@ -133,6 +188,7 @@ export class TrustClient extends TrustQueryClient implements TrustInterface {
     return await this.client.execute(this.sender, this.contractAddress, {
       update_config: {
         admin,
+        commerce_code_id: commerceCodeId,
         maintainer,
         max_rating: maxRating,
         max_staked_days: maxStakedDays,
@@ -154,17 +210,34 @@ export class TrustClient extends TrustQueryClient implements TrustInterface {
       }
     }, fee, memo, funds);
   };
+  registerPendingReview = async ({
+    orderId,
+    peer,
+    reviewer
+  }: {
+    orderId: number;
+    peer: string;
+    reviewer: string;
+  }, fee: number | StdFee | "auto" = "auto", memo?: string, funds?: Coin[]): Promise<ExecuteResult> => {
+    return await this.client.execute(this.sender, this.contractAddress, {
+      register_pending_review: {
+        order_id: orderId,
+        peer,
+        reviewer
+      }
+    }, fee, memo, funds);
+  };
   review = async ({
     address,
-    result
+    review
   }: {
     address: string;
-    result: ReviewResult;
+    review: ReviewResult;
   }, fee: number | StdFee | "auto" = "auto", memo?: string, funds?: Coin[]): Promise<ExecuteResult> => {
     return await this.client.execute(this.sender, this.contractAddress, {
       review: {
         address,
-        result
+        review
       }
     }, fee, memo, funds);
   };

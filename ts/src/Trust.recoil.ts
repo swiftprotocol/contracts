@@ -6,7 +6,7 @@
 
 import { selectorFamily } from "recoil";
 import { cosmWasmClient } from "./chain";
-import { Uint128, InstantiateMsg, TrustScoreParams, ExecuteMsg, ReviewResult, QueryMsg, Addr, AccountsResponse, StakeAmountResponse, TrustInfoResponse, TrustInfo, TrustData } from "./Trust.types";
+import { Uint128, InstantiateMsg, TrustScoreParams, ExecuteMsg, ReviewResult, QueryMsg, Addr, AccountsResponse, ConfigResponse, Config, Timestamp, Uint64, PendingReviewResponse, PendingReview, PendingReviewsResponse, StakeAmountResponse, Decimal, TrustInfoResponse, TrustInfo, TrustData } from "./Trust.types";
 import { TrustQueryClient } from "./Trust.client";
 type QueryClientParams = {
   contractAddress: string;
@@ -20,6 +20,20 @@ export const queryClient = selectorFamily<TrustQueryClient, QueryClientParams>({
   }) => {
     const client = get(cosmWasmClient);
     return new TrustQueryClient(client, contractAddress);
+  }
+});
+export const configSelector = selectorFamily<ConfigResponse, QueryClientParams & {
+  params: Parameters<TrustQueryClient["config"]>;
+}>({
+  key: "trustConfig",
+  get: ({
+    params,
+    ...queryClientParams
+  }) => async ({
+    get
+  }) => {
+    const client = get(queryClient(queryClientParams));
+    return await client.config(...params);
   }
 });
 export const trustInfoSelector = selectorFamily<TrustInfoResponse, QueryClientParams & {
@@ -62,5 +76,33 @@ export const accountsSelector = selectorFamily<AccountsResponse, QueryClientPara
   }) => {
     const client = get(queryClient(queryClientParams));
     return await client.accounts(...params);
+  }
+});
+export const pendingReviewSelector = selectorFamily<PendingReviewResponse, QueryClientParams & {
+  params: Parameters<TrustQueryClient["pendingReview"]>;
+}>({
+  key: "trustPendingReview",
+  get: ({
+    params,
+    ...queryClientParams
+  }) => async ({
+    get
+  }) => {
+    const client = get(queryClient(queryClientParams));
+    return await client.pendingReview(...params);
+  }
+});
+export const pendingReviewsByReviewerSelector = selectorFamily<PendingReviewsResponse, QueryClientParams & {
+  params: Parameters<TrustQueryClient["pendingReviewsByReviewer"]>;
+}>({
+  key: "trustPendingReviewsByReviewer",
+  get: ({
+    params,
+    ...queryClientParams
+  }) => async ({
+    get
+  }) => {
+    const client = get(queryClient(queryClientParams));
+    return await client.pendingReviewsByReviewer(...params);
   }
 });

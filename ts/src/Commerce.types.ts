@@ -6,6 +6,9 @@
 
 export interface InstantiateMsg {
   admins: string[];
+  denom: string;
+  trust_contract: string;
+  withdrawal_address: string;
 }
 export type ExecuteMsg = {
   update_admins: {
@@ -13,7 +16,9 @@ export type ExecuteMsg = {
   };
 } | {
   update_config: {
-    config: Config;
+    denom: string;
+    trust_contract: string;
+    withdrawal_address: string;
   };
 } | {
   update_marketing: {
@@ -68,21 +73,15 @@ export type ExecuteMsg = {
   receive: Cw20ReceiveMsg;
 };
 export type Uint128 = string;
-export type Network = "Twitter" | "Facebook" | "GitHub" | "LinkedIn" | "Instagram" | "YouTube" | "Reddit" | "Medium" | "Discord" | "TikTok" | "Twitch";
-export type OrderStatus = "Received" | "Fulfilling" | "Shipped";
+export type Network = "twitter" | "facebook" | "git_hub" | "linked_in" | "instagram" | "you_tube" | "reddit" | "medium" | "discord" | "tik_tok" | "twitch";
+export type OrderStatus = "received" | "fulfilling" | "shipped";
 export type Binary = string;
-export interface Config {
-  denom: string;
-  withdrawal_address: string;
-  [k: string]: unknown;
-}
 export interface Marketing {
   copyright?: string | null;
   featured_listings: Listing[];
   logo?: string | null;
   name: string;
   socials: Social[];
-  [k: string]: unknown;
 }
 export interface Listing {
   active: boolean;
@@ -90,25 +89,21 @@ export interface Listing {
   id: number;
   options: ListingOption[];
   price: Cw20Coin;
-  [k: string]: unknown;
 }
 export interface Attributes {
   description?: string | null;
   images: string[];
   name: string;
-  [k: string]: unknown;
 }
 export interface ListingOption {
   description?: string | null;
   id: number;
   name: string;
   options: ListingOptionItem[];
-  [k: string]: unknown;
 }
 export interface ListingOptionItem {
   cost?: Cw20Coin | null;
   name: string;
-  [k: string]: unknown;
 }
 export interface Cw20Coin {
   address: string;
@@ -117,23 +112,19 @@ export interface Cw20Coin {
 export interface Social {
   network: Network;
   url: string;
-  [k: string]: unknown;
 }
 export interface TrackingInfo {
   provider: string;
   url: string;
-  [k: string]: unknown;
 }
 export interface OrderItem {
   amount: number;
   listing_id: number;
   options: OrderOption[];
-  [k: string]: unknown;
 }
 export interface OrderOption {
   option_id: number;
   selected_option: ListingOptionItem;
-  [k: string]: unknown;
 }
 export interface Cw20ReceiveMsg {
   amount: Uint128;
@@ -173,8 +164,14 @@ export interface AdminListResponse {
 export interface CanExecuteResponse {
   can_execute: boolean;
 }
+export type Addr = string;
 export interface ConfigResponse {
   config: Config;
+}
+export interface Config {
+  denom: Addr;
+  trust_contract: Addr;
+  withdrawal_address: Addr;
 }
 export interface ListingResponse {
   listing?: Listing | null;
@@ -188,7 +185,6 @@ export interface BalanceResponse {
 export interface MarketingResponse {
   marketing: Marketing;
 }
-export type Addr = string;
 export interface OrderResponse {
   order?: Order | null;
 }
@@ -198,7 +194,6 @@ export interface Order {
   items: OrderItem[];
   status: OrderStatus;
   tracking?: TrackingInfo | null;
-  [k: string]: unknown;
 }
 export interface OrdersResponse {
   orders: Order[];

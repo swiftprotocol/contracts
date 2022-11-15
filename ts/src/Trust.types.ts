@@ -6,6 +6,7 @@
 
 export type Uint128 = string;
 export interface InstantiateMsg {
+  commerce_code_id: number;
   maintainer: string;
   max_rating: number;
   max_staked_days: number;
@@ -16,15 +17,16 @@ export interface InstantiateMsg {
 }
 export interface TrustScoreParams {
   base_score: number;
+  denom_multiplier: number;
   min_stake_days: number;
   rating_floor_denominator: number;
   rating_multiplier: number;
   stake_amount_denominator: number;
-  [k: string]: unknown;
 }
 export type ExecuteMsg = {
   update_config: {
     admin: string;
+    commerce_code_id: number;
     maintainer: string;
     max_rating: number;
     max_staked_days: number;
@@ -38,13 +40,21 @@ export type ExecuteMsg = {
     address: string;
   };
 } | {
+  register_pending_review: {
+    order_id: number;
+    peer: string;
+    reviewer: string;
+  };
+} | {
   review: {
     address: string;
-    result: ReviewResult;
+    review: ReviewResult;
   };
 };
-export type ReviewResult = "ThumbsUp" | "ThumbsDown";
+export type ReviewResult = "thumbs_up" | "thumbs_down";
 export type QueryMsg = {
+  config: {};
+} | {
   trust_info: {
     address: string;
   };
@@ -54,26 +64,62 @@ export type QueryMsg = {
   };
 } | {
   accounts: {};
+} | {
+  pending_review: {
+    peer: string;
+  };
+} | {
+  pending_reviews_by_reviewer: {
+    reviewer: string;
+  };
 };
 export type Addr = string;
 export interface AccountsResponse {
   accounts: Addr[];
 }
+export interface ConfigResponse {
+  config: Config;
+}
+export interface Config {
+  admin: Addr;
+  commerce_code_id: number;
+  maintainer: Addr;
+  max_rating: number;
+  max_staked_days: number;
+  max_staked_tokens: Uint128;
+  review_interval: number;
+  staking_contract: Addr;
+  trust_score_params: TrustScoreParams;
+}
+export type Timestamp = Uint64;
+export type Uint64 = string;
+export interface PendingReviewResponse {
+  pending_review?: PendingReview | null;
+}
+export interface PendingReview {
+  commerce_contract: Addr;
+  expires_at: Timestamp;
+  order_id: number;
+  peer: Addr;
+  reviewer: Addr;
+}
+export interface PendingReviewsResponse {
+  pending_reviews: PendingReview[];
+}
 export interface StakeAmountResponse {
   stake_amount?: Uint128 | null;
 }
+export type Decimal = string;
 export interface TrustInfoResponse {
   trust_info?: TrustInfo | null;
 }
 export interface TrustInfo {
   data: TrustData;
-  score: number;
-  [k: string]: unknown;
+  score: Decimal;
 }
 export interface TrustData {
   prev_stake_amount: Uint128;
   rating: number;
   stake_amount: Uint128;
   stake_days: number;
-  [k: string]: unknown;
 }

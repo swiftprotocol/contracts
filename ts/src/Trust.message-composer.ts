@@ -8,12 +8,13 @@ import { Coin } from "@cosmjs/amino";
 import { MsgExecuteContractEncodeObject } from "cosmwasm";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { toUtf8 } from "@cosmjs/encoding";
-import { Uint128, InstantiateMsg, TrustScoreParams, ExecuteMsg, ReviewResult, QueryMsg, Addr, AccountsResponse, StakeAmountResponse, TrustInfoResponse, TrustInfo, TrustData } from "./Trust.types";
+import { Uint128, InstantiateMsg, TrustScoreParams, ExecuteMsg, ReviewResult, QueryMsg, Addr, AccountsResponse, ConfigResponse, Config, Timestamp, Uint64, PendingReviewResponse, PendingReview, PendingReviewsResponse, StakeAmountResponse, Decimal, TrustInfoResponse, TrustInfo, TrustData } from "./Trust.types";
 export interface TrustMessage {
   contractAddress: string;
   sender: string;
   updateConfig: ({
     admin,
+    commerceCodeId,
     maintainer,
     maxRating,
     maxStakedDays,
@@ -23,6 +24,7 @@ export interface TrustMessage {
     trustScoreParams
   }: {
     admin: string;
+    commerceCodeId: number;
     maintainer: string;
     maxRating: number;
     maxStakedDays: number;
@@ -36,12 +38,21 @@ export interface TrustMessage {
   }: {
     address: string;
   }, funds?: Coin[]) => MsgExecuteContractEncodeObject;
+  registerPendingReview: ({
+    orderId,
+    peer,
+    reviewer
+  }: {
+    orderId: number;
+    peer: string;
+    reviewer: string;
+  }, funds?: Coin[]) => MsgExecuteContractEncodeObject;
   review: ({
     address,
-    result
+    review
   }: {
     address: string;
-    result: ReviewResult;
+    review: ReviewResult;
   }, funds?: Coin[]) => MsgExecuteContractEncodeObject;
 }
 export class TrustMessageComposer implements TrustMessage {
@@ -53,11 +64,13 @@ export class TrustMessageComposer implements TrustMessage {
     this.contractAddress = contractAddress;
     this.updateConfig = this.updateConfig.bind(this);
     this.updateStakingInfo = this.updateStakingInfo.bind(this);
+    this.registerPendingReview = this.registerPendingReview.bind(this);
     this.review = this.review.bind(this);
   }
 
   updateConfig = ({
     admin,
+    commerceCodeId,
     maintainer,
     maxRating,
     maxStakedDays,
@@ -67,6 +80,7 @@ export class TrustMessageComposer implements TrustMessage {
     trustScoreParams
   }: {
     admin: string;
+    commerceCodeId: number;
     maintainer: string;
     maxRating: number;
     maxStakedDays: number;
@@ -83,6 +97,7 @@ export class TrustMessageComposer implements TrustMessage {
         msg: toUtf8(JSON.stringify({
           update_config: {
             admin,
+            commerce_code_id: commerceCodeId,
             maintainer,
             max_rating: maxRating,
             max_staked_days: maxStakedDays,
@@ -115,12 +130,37 @@ export class TrustMessageComposer implements TrustMessage {
       })
     };
   };
+  registerPendingReview = ({
+    orderId,
+    peer,
+    reviewer
+  }: {
+    orderId: number;
+    peer: string;
+    reviewer: string;
+  }, funds?: Coin[]): MsgExecuteContractEncodeObject => {
+    return {
+      typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+      value: MsgExecuteContract.fromPartial({
+        sender: this.sender,
+        contract: this.contractAddress,
+        msg: toUtf8(JSON.stringify({
+          register_pending_review: {
+            order_id: orderId,
+            peer,
+            reviewer
+          }
+        })),
+        funds
+      })
+    };
+  };
   review = ({
     address,
-    result
+    review
   }: {
     address: string;
-    result: ReviewResult;
+    review: ReviewResult;
   }, funds?: Coin[]): MsgExecuteContractEncodeObject => {
     return {
       typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
@@ -130,7 +170,7 @@ export class TrustMessageComposer implements TrustMessage {
         msg: toUtf8(JSON.stringify({
           review: {
             address,
-            result
+            review
           }
         })),
         funds

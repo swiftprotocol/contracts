@@ -70,7 +70,7 @@ Once again, get the contract address from the result JSON and add it to `.env`.
 ### Create a product
 
 ```bash
-./exec_create_listing.sh [name] [price]
+./exec_create_listing.sh [name] [price] [description] [image]
 ```
 
 ### Create an order for a product

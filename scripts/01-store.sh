@@ -12,10 +12,10 @@ junod config output json
 
 echo "- commerce\n";
 junod tx wasm store commerce.wasm --from $TESTNET_KEY \
-    --gas-prices 0.025ustars --gas-adjustment 1.7 \
+    --gas-prices 0.025ujunox --gas-adjustment 1.7 \
     --gas auto -y -b block -o json | jq '.logs' | grep -A 1 code_id
 
 echo "- trust\n";
 junod tx wasm store trust.wasm --from $TESTNET_KEY \
-    --gas-prices 0.025ustars --gas-adjustment 1.7 \
+    --gas-prices 0.025ujunox --gas-adjustment 1.7 \
     --gas auto -y -b block -o json | jq '.logs' | grep -A 1 code_id

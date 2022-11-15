@@ -8,7 +8,7 @@ import { Coin } from "@cosmjs/amino";
 import { MsgExecuteContractEncodeObject } from "cosmwasm";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { toUtf8 } from "@cosmjs/encoding";
-import { InstantiateMsg, ExecuteMsg, Uint128, Network, OrderStatus, Binary, Config, Marketing, Listing, Attributes, ListingOption, ListingOptionItem, Cw20Coin, Social, TrackingInfo, OrderItem, OrderOption, Cw20ReceiveMsg, QueryMsg, AdminListResponse, CanExecuteResponse, ConfigResponse, ListingResponse, ListingsResponse, BalanceResponse, MarketingResponse, Addr, OrderResponse, Order, OrdersResponse } from "./Commerce.types";
+import { InstantiateMsg, ExecuteMsg, Uint128, Network, OrderStatus, Binary, Marketing, Listing, Attributes, ListingOption, ListingOptionItem, Cw20Coin, Social, TrackingInfo, OrderItem, OrderOption, Cw20ReceiveMsg, QueryMsg, AdminListResponse, CanExecuteResponse, Addr, ConfigResponse, Config, ListingResponse, ListingsResponse, BalanceResponse, MarketingResponse, OrderResponse, Order, OrdersResponse } from "./Commerce.types";
 export interface CommerceMessage {
   contractAddress: string;
   sender: string;
@@ -18,9 +18,13 @@ export interface CommerceMessage {
     admins: string[];
   }, funds?: Coin[]) => MsgExecuteContractEncodeObject;
   updateConfig: ({
-    config
+    denom,
+    trustContract,
+    withdrawalAddress
   }: {
-    config: Config;
+    denom: string;
+    trustContract: string;
+    withdrawalAddress: string;
   }, funds?: Coin[]) => MsgExecuteContractEncodeObject;
   updateMarketing: ({
     marketing
@@ -142,9 +146,13 @@ export class CommerceMessageComposer implements CommerceMessage {
     };
   };
   updateConfig = ({
-    config
+    denom,
+    trustContract,
+    withdrawalAddress
   }: {
-    config: Config;
+    denom: string;
+    trustContract: string;
+    withdrawalAddress: string;
   }, funds?: Coin[]): MsgExecuteContractEncodeObject => {
     return {
       typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
@@ -153,7 +161,9 @@ export class CommerceMessageComposer implements CommerceMessage {
         contract: this.contractAddress,
         msg: toUtf8(JSON.stringify({
           update_config: {
-            config
+            denom,
+            trust_contract: trustContract,
+            withdrawal_address: withdrawalAddress
           }
         })),
         funds

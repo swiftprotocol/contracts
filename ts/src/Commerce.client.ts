@@ -6,7 +6,7 @@
 
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { Coin, StdFee } from "@cosmjs/amino";
-import { InstantiateMsg, ExecuteMsg, Uint128, Network, OrderStatus, Binary, Config, Marketing, Listing, Attributes, ListingOption, ListingOptionItem, Cw20Coin, Social, TrackingInfo, OrderItem, OrderOption, Cw20ReceiveMsg, QueryMsg, AdminListResponse, CanExecuteResponse, ConfigResponse, ListingResponse, ListingsResponse, BalanceResponse, MarketingResponse, Addr, OrderResponse, Order, OrdersResponse } from "./Commerce.types";
+import { InstantiateMsg, ExecuteMsg, Uint128, Network, OrderStatus, Binary, Marketing, Listing, Attributes, ListingOption, ListingOptionItem, Cw20Coin, Social, TrackingInfo, OrderItem, OrderOption, Cw20ReceiveMsg, QueryMsg, AdminListResponse, CanExecuteResponse, Addr, ConfigResponse, Config, ListingResponse, ListingsResponse, BalanceResponse, MarketingResponse, OrderResponse, Order, OrdersResponse } from "./Commerce.types";
 export interface CommerceReadOnlyInterface {
   contractAddress: string;
   config: () => Promise<ConfigResponse>;
@@ -129,9 +129,13 @@ export interface CommerceInterface extends CommerceReadOnlyInterface {
     admins: string[];
   }, fee?: number | StdFee | "auto", memo?: string, funds?: Coin[]) => Promise<ExecuteResult>;
   updateConfig: ({
-    config
+    denom,
+    trustContract,
+    withdrawalAddress
   }: {
-    config: Config;
+    denom: string;
+    trustContract: string;
+    withdrawalAddress: string;
   }, fee?: number | StdFee | "auto", memo?: string, funds?: Coin[]) => Promise<ExecuteResult>;
   updateMarketing: ({
     marketing
@@ -248,13 +252,19 @@ export class CommerceClient extends CommerceQueryClient implements CommerceInter
     }, fee, memo, funds);
   };
   updateConfig = async ({
-    config
+    denom,
+    trustContract,
+    withdrawalAddress
   }: {
-    config: Config;
+    denom: string;
+    trustContract: string;
+    withdrawalAddress: string;
   }, fee: number | StdFee | "auto" = "auto", memo?: string, funds?: Coin[]): Promise<ExecuteResult> => {
     return await this.client.execute(this.sender, this.contractAddress, {
       update_config: {
-        config
+        denom,
+        trust_contract: trustContract,
+        withdrawal_address: withdrawalAddress
       }
     }, fee, memo, funds);
   };
