@@ -149,7 +149,7 @@ For this command, you will have to enter the details you want to update in the `
 ./schema.sh
 ```
 
-### Optimize contacts
+### Optimize contracts
 
 ```bash
 ./optimize.sh
