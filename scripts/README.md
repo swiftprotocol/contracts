@@ -65,6 +65,12 @@ Get the contract address from the result JSON and add it to `.env`.
 
 Once again, get the contract address from the result JSON and add it to `.env`.
 
+### Update commerce contract marketing info
+
+```bash
+./04-update_marketing.sh [store_name]
+```
+
 ## Functionality
 
 ### Create a product
