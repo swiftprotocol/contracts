@@ -135,6 +135,8 @@ pub enum QueryMsg {
     Orders {},
     #[returns(OrderResponse)]
     Order { id: u64 },
+    #[returns(OrderCostResponse)]
+    OrderCost { id: u64 },
     /// Get single or all listings
     #[returns(ListingsResponse)]
     Listings {},

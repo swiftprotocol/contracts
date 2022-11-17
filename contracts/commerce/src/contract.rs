@@ -120,6 +120,7 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
 
         QueryMsg::Orders {} => to_binary(&query_orders(deps)?),
         QueryMsg::Order { id } => to_binary(&query_order(deps, id)?),
+        QueryMsg::OrderCost { id } => to_binary(&query_order_cost(deps, id)?),
     }
 }
 

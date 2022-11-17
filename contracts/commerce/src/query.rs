@@ -1,6 +1,6 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::{Deps, StdResult};
-use cosmwasm_std::{Env, Order, Uint128};
+use cosmwasm_std::{Env, Order, StdError, Uint128};
 
 use cw1::CanExecuteResponse;
 use cw20::{Balance, Cw20Coin};
@@ -126,4 +126,18 @@ pub fn query_order(deps: Deps, id: u64) -> StdResult<OrderResponse> {
     let order = orders().may_load(deps.storage, id)?;
 
     Ok(OrderResponse { order })
+}
+
+pub fn query_order_cost(deps: Deps, id: u64) -> StdResult<OrderCostResponse> {
+    let order = orders().may_load(deps.storage, id)?;
+
+    match order {
+        Some(order) => {
+            let cost = eval_cost(deps, order.items).unwrap_or(Uint128::zero());
+            Ok(OrderCostResponse { cost })
+        }
+        None => Err(StdError::NotFound {
+            kind: String::from("order"),
+        }),
+    }
 }

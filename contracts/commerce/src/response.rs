@@ -1,4 +1,5 @@
 use cosmwasm_schema::cw_serde;
+use cosmwasm_std::Uint128;
 use cw20::Cw20Coin;
 
 use crate::state::config::{Config, Marketing};
@@ -38,6 +39,11 @@ pub struct OrdersResponse {
 #[cw_serde]
 pub struct OrderResponse {
     pub order: Option<Order>,
+}
+
+#[cw_serde]
+pub struct OrderCostResponse {
+    pub cost: Uint128,
 }
 
 #[cw_serde]
