@@ -6,7 +6,7 @@
 
 import { selectorFamily } from "recoil";
 import { cosmWasmClient } from "./chain";
-import { InstantiateMsg, ExecuteMsg, Uint128, Network, OrderStatus, Binary, Marketing, Listing, Attributes, ListingOption, ListingOptionItem, Cw20Coin, Social, TrackingInfo, OrderItem, OrderOption, Cw20ReceiveMsg, QueryMsg, AdminListResponse, CanExecuteResponse, Addr, ConfigResponse, Config, ListingResponse, ListingsResponse, BalanceResponse, MarketingResponse, OrderResponse, Order, OrdersResponse } from "./Commerce.types";
+import { InstantiateMsg, ExecuteMsg, Uint128, Network, OrderStatus, Binary, Marketing, Listing, Attributes, ListingOption, ListingOptionItem, Cw20Coin, Social, TrackingInfo, OrderItem, OrderOption, Cw20ReceiveMsg, QueryMsg, AdminListResponse, CanExecuteResponse, Addr, ConfigResponse, Config, ListingResponse, ListingsResponse, BalanceResponse, MarketingResponse, OrderResponse, Order, OrderCostResponse, OrdersResponse } from "./Commerce.types";
 import { CommerceQueryClient } from "./Commerce.client";
 type QueryClientParams = {
   contractAddress: string;
@@ -132,6 +132,20 @@ export const orderSelector = selectorFamily<OrderResponse, QueryClientParams & {
   }) => {
     const client = get(queryClient(queryClientParams));
     return await client.order(...params);
+  }
+});
+export const orderCostSelector = selectorFamily<OrderCostResponse, QueryClientParams & {
+  params: Parameters<CommerceQueryClient["orderCost"]>;
+}>({
+  key: "commerceOrderCost",
+  get: ({
+    params,
+    ...queryClientParams
+  }) => async ({
+    get
+  }) => {
+    const client = get(queryClient(queryClientParams));
+    return await client.orderCost(...params);
   }
 });
 export const listingsSelector = selectorFamily<ListingsResponse, QueryClientParams & {

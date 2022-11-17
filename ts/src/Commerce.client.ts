@@ -6,7 +6,7 @@
 
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { Coin, StdFee } from "@cosmjs/amino";
-import { InstantiateMsg, ExecuteMsg, Uint128, Network, OrderStatus, Binary, Marketing, Listing, Attributes, ListingOption, ListingOptionItem, Cw20Coin, Social, TrackingInfo, OrderItem, OrderOption, Cw20ReceiveMsg, QueryMsg, AdminListResponse, CanExecuteResponse, Addr, ConfigResponse, Config, ListingResponse, ListingsResponse, BalanceResponse, MarketingResponse, OrderResponse, Order, OrdersResponse } from "./Commerce.types";
+import { InstantiateMsg, ExecuteMsg, Uint128, Network, OrderStatus, Binary, Marketing, Listing, Attributes, ListingOption, ListingOptionItem, Cw20Coin, Social, TrackingInfo, OrderItem, OrderOption, Cw20ReceiveMsg, QueryMsg, AdminListResponse, CanExecuteResponse, Addr, ConfigResponse, Config, ListingResponse, ListingsResponse, BalanceResponse, MarketingResponse, OrderResponse, Order, OrderCostResponse, OrdersResponse } from "./Commerce.types";
 export interface CommerceReadOnlyInterface {
   contractAddress: string;
   config: () => Promise<ConfigResponse>;
@@ -25,6 +25,11 @@ export interface CommerceReadOnlyInterface {
   }: {
     id: number;
   }) => Promise<OrderResponse>;
+  orderCost: ({
+    id
+  }: {
+    id: number;
+  }) => Promise<OrderCostResponse>;
   listings: () => Promise<ListingsResponse>;
   listing: ({
     id
@@ -47,6 +52,7 @@ export class CommerceQueryClient implements CommerceReadOnlyInterface {
     this.marketing = this.marketing.bind(this);
     this.orders = this.orders.bind(this);
     this.order = this.order.bind(this);
+    this.orderCost = this.orderCost.bind(this);
     this.listings = this.listings.bind(this);
     this.listing = this.listing.bind(this);
   }
@@ -99,6 +105,17 @@ export class CommerceQueryClient implements CommerceReadOnlyInterface {
   }): Promise<OrderResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       order: {
+        id
+      }
+    });
+  };
+  orderCost = async ({
+    id
+  }: {
+    id: number;
+  }): Promise<OrderCostResponse> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      order_cost: {
         id
       }
     });

@@ -152,6 +152,10 @@ export type QueryMsg = {
     id: number;
   };
 } | {
+  order_cost: {
+    id: number;
+  };
+} | {
   listings: {};
 } | {
   listing: {
@@ -194,6 +198,9 @@ export interface Order {
   items: OrderItem[];
   status: OrderStatus;
   tracking?: TrackingInfo | null;
+}
+export interface OrderCostResponse {
+  cost: Uint128;
 }
 export interface OrdersResponse {
   orders: Order[];
